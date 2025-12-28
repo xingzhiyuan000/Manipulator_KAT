@@ -108,10 +108,20 @@ namespace OpenTK_Winform_Robot
             _scaleSensitivity = trackBar4.Value / 10.0f;
             _moveSensitivity = trackBar5.Value / 1000.0f;
 
-            init_Pos();     
-            init_MDH();     
-            init_Offset(); 
-            InitChart();    
+            if (Txt_model1.Text == "" && Txt_model2.Text == "" && Txt_model3.Text == "" && Txt_model4.Text == "" && Txt_model5.Text == "")
+            {
+                global.existModels = false;
+            }
+            else global.existModels = true;
+
+            if (global.existModels)
+            {
+                init_Pos();
+                init_MDH();
+                init_Offset();
+                InitChart();
+            }
+                
         }
 
         private void init_Offset()  
@@ -296,9 +306,11 @@ namespace OpenTK_Winform_Robot
             prepareCamera(); 
 
             if (projectionIndex == 1) preparePerspective(); 
-            else prepareOrtho(); 
+            else prepareOrtho();
 
-            prepare();  
+
+            prepare();
+
 
             find_joint1 = findJoint(global.scene, "坐标1_大臂移动");
             find_joint2 = findJoint(global.scene, "坐标1_大臂移动V2");
@@ -611,12 +623,16 @@ namespace OpenTK_Winform_Robot
 
         private Object findJoint(Object obj, String name)
         {
-            var children = obj.getChild();
-            for (int i = 0; i < children.Count; i++)
+            if (global.existModels)
             {
-                if (children[i].GetName() == name) joint = children[i];
-                else findJoint(children[i], name);
+                var children = obj.getChild();
+                for (int i = 0; i < children.Count; i++)
+                {
+                    if (children[i].GetName() == name) joint = children[i];
+                    else findJoint(children[i], name);
+                }
             }
+
             return joint;
         }
 
@@ -697,58 +713,75 @@ namespace OpenTK_Winform_Robot
         string projectRoot;
         void prepare()
         {
-             exeDir = Application.StartupPath;
-             projectRoot = Directory.GetParent(exeDir).Parent.FullName;
-
+            exeDir = Application.StartupPath;
+            projectRoot = Directory.GetParent(exeDir).Parent.FullName;
+            
             renderer = new Renderer();  
-            global.scene = new Scene();        
+            global.scene = new Scene();
 
-            robotModel = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/Manipulator_20250326.fbx");  
-           
-
-            robotModel.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
             light = new Light();
             light.setDirectionalLight(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(-1.0f, -1.0f, 1.0f));
 
+            Mesh groundMesh = prepareGround();
+            global.scene.addChild(groundMesh);
 
-            global.scene.addChild(robotModel);
-
-
-
-            Mesh bones = prepareBones();
-            global.scene.addChild(bones);
-
-            projectBones();
-
-
-            MJ01 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ01.fbx");
-            MJ01.SetName("磨机_01");
-            MJ01.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            global.scene.addChild(MJ01);
-
-            MJ02 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ02.fbx");
-            MJ02.SetName("磨机_02");
-            MJ02.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            global.scene.addChild(MJ02);
-            
-
-            MJ03 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ03.fbx");
-            MJ03.SetName("磨机_03");
-            MJ03.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            global.scene.addChild(MJ03);
-            
-
-            MJ04 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ04.fbx");
-            MJ04.SetName("磨机_04");
-            MJ04.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            global.scene.addChild(MJ04);
+            if (global.existModels)
+            {
+                // Models Import
+                robotModel = AssimpLoader.loadModel(projectRoot + Txt_model1.Text.ToString());
+                robotModel.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
+                global.scene.addChild(robotModel);
 
 
+                Mesh bones = prepareBones();
+                global.scene.addChild(bones);
 
+                projectBones();
+
+
+                MJ01 = AssimpLoader.loadModel(projectRoot + Txt_model2.Text.ToString());
+                MJ01.SetName("Model_02");
+                MJ01.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
+                global.scene.addChild(MJ01);
+
+                MJ02 = AssimpLoader.loadModel(projectRoot + Txt_model3.Text.ToString());
+                MJ02.SetName("Model_03");
+                MJ02.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
+                global.scene.addChild(MJ02);
+
+
+                MJ03 = AssimpLoader.loadModel(projectRoot + Txt_model4.Text.ToString());
+                MJ03.SetName("Model_04");
+                MJ03.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
+                global.scene.addChild(MJ03);
+
+
+                MJ04 = AssimpLoader.loadModel(projectRoot + Txt_model5.Text.ToString());
+                MJ04.SetName("Model_05");
+                MJ04.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
+                global.scene.addChild(MJ04);
+
+            }
 
         }
 
+        private Mesh prepareGround()
+        {
+            Geometry geometry = new Geometry();
+            geometry = geometry.createPlane(100.0f, 100.0f);
+    
+            Material material = new Material();
 
+            material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/target.jpg", 0);
+            material.mType = MaterialType.PhongMaterial;
+  
+            Mesh mesh = new Mesh(geometry, material);
+            mesh.SetPosition(new Vector3(0.0f, -1.6405f, 0.0f));
+            mesh.setAngleX(-90.0f);
+            mesh.SetName("Ground");
+
+            return mesh;
+        }
         private void projectBones()
         {
             listJoints = new List<Joint>();
@@ -866,18 +899,18 @@ namespace OpenTK_Winform_Robot
             Mesh mesh_10 = new Mesh(geometry, material);
             Mesh mesh_11 = new Mesh(geometry, material);
 
-            mesh_0.SetName("关节0");
-            mesh_1.SetName("关节1");
-            mesh_2.SetName("关节2");
-            mesh_3.SetName("关节3");
-            mesh_4.SetName("关节4");
-            mesh_5.SetName("关节5");
-            mesh_6.SetName("关节6");
-            mesh_7.SetName("关节7");
-            mesh_8.SetName("关节8");
-            mesh_9.SetName("关节9");
-            mesh_10.SetName("关节10");
-            mesh_11.SetName("关节11");
+            mesh_0.SetName("Joint0");
+            mesh_1.SetName("Joint1");
+            mesh_2.SetName("Joint2");
+            mesh_3.SetName("Joint3");
+            mesh_4.SetName("Joint4");
+            mesh_5.SetName("Joint5");
+            mesh_6.SetName("Joint6");
+            mesh_7.SetName("Joint7");
+            mesh_8.SetName("Joint8");
+            mesh_9.SetName("Joint9");
+            mesh_10.SetName("Joint10");
+            mesh_11.SetName("Joint11");
 
             mesh_0.SetPosition(global.r_position_0);
             mesh_1.SetPosition(global.r_position_1);
@@ -1003,10 +1036,14 @@ namespace OpenTK_Winform_Robot
 
         private void moveJoint1(float val)
         {
+            if (global.existModels)
+            {
             Vector3 changedValue = new Vector3(0.0f, 0.0f, -val / 1000.0f);
             find_joint1.SetPosition(changedValue);
             listJoints[0].getMesh().SetPosition(changedValue);
             showEndPosition();
+            }
+
         }
         private void trackBar9_Scroll(object sender, EventArgs e)
         {
@@ -1017,6 +1054,8 @@ namespace OpenTK_Winform_Robot
 
         private void moveJoint2(float val)
         {
+            if (global.existModels)
+            {
             Vector3 changedValue = new Vector3(0.0f, val / 1000.0f, 0.0f);
 
             find_joint2.SetPosition(changedValue);
@@ -1026,6 +1065,8 @@ namespace OpenTK_Winform_Robot
             listJoints[1].getMesh().SetPosition(offset + changedValue);
 
             showEndPosition();
+            }
+
         }
         private void trackBar_2_Scroll(object sender, EventArgs e)
         {
@@ -1036,10 +1077,14 @@ namespace OpenTK_Winform_Robot
 
         private void moveJoint3(float val)
         {
+            if (global.existModels)
+            {
             find_joint3.SetAngle2((float)val);
             listJoints[2].getMesh().setAngleY((float)val);
 
             showEndPosition();
+            }
+
         }
 
         private void trackBar_3_Scroll(object sender, EventArgs e)
@@ -1050,10 +1095,14 @@ namespace OpenTK_Winform_Robot
         }
         private void moveJoint4(float val)
         {
+            if (global.existModels)
+            {
             find_joint4.SetAngle3((float)val);
             listJoints[4].getMesh().setAngleX((float)val);
 
             showEndPosition();
+            }
+
         }
         private void trackBar_4_Scroll(object sender, EventArgs e)
         {
@@ -1063,12 +1112,16 @@ namespace OpenTK_Winform_Robot
         }
         private void moveJoint5(float val)
         {
+            if (global.existModels)
+            {
             find_joint5.SetPosition(new Vector3(0.0f, val / 1000.0f, 0.0f));
             Vector3 changedValue = new Vector3(0.0f, 0.0f, val / 1000.0f);
             Vector3 offset = global.w_position_6 - global.w_position_5;
             listJoints[6].getMesh().SetPosition(offset - changedValue);
 
             showEndPosition();
+            }
+
         }
         private void trackBar10_Scroll(object sender, EventArgs e)
         {
@@ -1078,12 +1131,16 @@ namespace OpenTK_Winform_Robot
         }
         private void moveJoint6(float val)
         {
+            if (global.existModels)
+            {
             find_joint6.SetPosition(new Vector3(0.0f, val / 1000.0f, 0.0f));
             Vector3 changedValue = new Vector3(0.0f, 0.0f, val / 1000.0f);
             Vector3 offset = global.w_position_7 - global.w_position_6;
             listJoints[7].getMesh().SetPosition(offset - changedValue);
 
             showEndPosition();
+            }
+
         }
         private void init_Pos()
         {
@@ -1117,9 +1174,13 @@ namespace OpenTK_Winform_Robot
         }
         private void moveJoint7(float val)
         {
+            if (global.existModels)
+            {
             find_joint7.SetAngle4(val);
             listJoints[8].getMesh().setAngleY(val);
             showEndPosition();
+            }
+
         }
         private void trackBar6_Scroll(object sender, EventArgs e)
         {
@@ -1129,9 +1190,13 @@ namespace OpenTK_Winform_Robot
         }
         private void moveJoint8(float val)
         {
+            if (global.existModels)
+            {
             find_joint8.SetAngle5(val);
             listJoints[9].getMesh().setAngleX(val);
             showEndPosition();
+            }
+
         }
         private void trackBar7_Scroll(object sender, EventArgs e)
         {
@@ -1141,9 +1206,13 @@ namespace OpenTK_Winform_Robot
         }
         private void moveJoint9(float val)
         {
+            if (global.existModels)
+            {
             find_joint9.SetAngle6(-(float)val);
             listJoints[10].getMesh().setAngleZ((float)val);
             showEndPosition();
+            }
+
         }
 
 
@@ -1242,7 +1311,8 @@ namespace OpenTK_Winform_Robot
        
         private Dictionary<int, InstancedMesh> InstancedMeshDict = new Dictionary<int, InstancedMesh>();
         private int rowCount;   
-        string showPath=@"J:\同步空间\BaiduSyncdisk\Matlab\路径规划\Data";    
+        string showPath= Directory.GetCurrentDirectory();
+
         private void btn_show_workspace_Click(object sender, EventArgs e)
         {
             int instance_Lim = 100; 
@@ -1263,7 +1333,7 @@ namespace OpenTK_Winform_Robot
                 
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.InitialDirectory = showPath;  
-                openFileDialog.Filter = "文本文件 (*.xlsx)|*.xlsx|所有文件 (*.*)|*.*";
+                openFileDialog.Filter = "Text files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
@@ -1292,7 +1362,7 @@ namespace OpenTK_Winform_Robot
                         if (i == 1 || (i - 1) % instance_Lim == 0)
                         {
                             InstancedMesh sphereMesh = new InstancedMesh(geometry, material, instance_Lim);
-                            sphereMesh.SetName("轨迹点");
+                            sphereMesh.SetName("Trajectory point");
                             InstancedMeshDict[(i - 1) / instance_Lim] = sphereMesh;
                         }
                         InstancedMeshDict[(i - 1) / instance_Lim].mInstanceMatrices[(i - 1) % instance_Lim] = Matrix4.CreateTranslation(new Vector3(x, y, z));
@@ -1311,7 +1381,7 @@ namespace OpenTK_Winform_Robot
             }
             else
             {
-                btn_show_workspace.Text = "显示工作空间";
+                btn_show_workspace.Text = "Show";
 
 
                 for (int i = 1; i < rowCount; i++)
@@ -1339,6 +1409,7 @@ namespace OpenTK_Winform_Robot
 
         private void btn_updateJoint_Click(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
 
             Stopwatch timeWatch = new Stopwatch();
             timeWatch.Start();  
@@ -1346,7 +1417,7 @@ namespace OpenTK_Winform_Robot
             updateJoint();
 
             timeWatch.Stop();  
-            groupBox8.Text = "逆向运动学(" + timeWatch.ElapsedMilliseconds + "ms)";
+            groupBox8.Text = "IK(" + timeWatch.ElapsedMilliseconds + "ms)";
         }
         int iter_num = 1;    
         private (double, double, double[]) updateJoint(bool showAnimation = false)
@@ -1505,6 +1576,8 @@ namespace OpenTK_Winform_Robot
 
         private void btn_FK_Click(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
+
             double V1 = 6658.2;
             double V2 = 49.7;
             double V3 = 35.5;
@@ -1531,38 +1604,38 @@ namespace OpenTK_Winform_Robot
 
         private void chk_MJ01_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
+
             if (!chk_MJ01.Checked) global.scene.removeChild(MJ01);
             else global.scene.addChild(MJ01);
         }
 
         private void chk_MJ02_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
             if (!chk_MJ02.Checked) global.scene.removeChild(MJ02);
             else global.scene.addChild(MJ02);
         }
 
         private void chk_MJ03_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
             if (!chk_MJ03.Checked) global.scene.removeChild(MJ03);
             else global.scene.addChild(MJ03);
         }
 
         private void chk_MJ04_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
             if (!chk_MJ04.Checked) global.scene.removeChild(MJ04);
             else global.scene.addChild(MJ04);
         }
-
-
-
 
         double num_fresh;
         double num_current;
         double[] move_step;
         int move_joint;
         double[] q_star;
-        
-
         private void timer2_Tick(object sender, EventArgs e)
         {
             if (num_current > num_fresh)
@@ -1774,17 +1847,20 @@ namespace OpenTK_Winform_Robot
 
         private void chk_CB01_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
             if (!chk_CB01.Checked) findJoint(robotModel, "坐标7_腕部滚摆").removeChild(CB01);
             else findJoint(robotModel, "坐标7_腕部滚摆").addChild(CB01);
         }
 
         private void chk_EE_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
             if (!chk_EE.Checked) findJoint(robotModel, "坐标7_腕部滚摆").removeChild(eeAxis);
             else findJoint(robotModel, "坐标7_腕部滚摆").addChild(eeAxis);
         }
         private void chk_manipulator_CheckedChanged(object sender, EventArgs e)
         {
+            if (!global.existModels) return;
             if (!chk_manipulator.Checked) global.scene.removeChild(robotModel);
             else global.scene.addChild(robotModel);
         }
@@ -1882,77 +1958,6 @@ namespace OpenTK_Winform_Robot
                 btnColor_Blue.BackColor.B / 255f,
                 btnColor_Blue.BackColor.A / 255f);
             glControl1_Paint(null, null);
-        }
-
-        public IXLWorksheet worksheet_PP;
-        private bool isPaused;       
-        private void btn_pp_show_Click(object sender, EventArgs e)
-        {
-            string defaultPath;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = @"J:\同步空间\BaiduSyncdisk\Matlab\路径规划\Data";  
-            openFileDialog.Filter = "文本文件 (*.xlsx)|*.xlsx|所有文件 (*.*)|*.*";
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                defaultPath = openFileDialog.FileName;   
-                XLWorkbook inventory_rb = new XLWorkbook(defaultPath);
-                worksheet_PP = inventory_rb.Worksheet(1);   
-
-                int rowCount = worksheet_PP.RowsUsed().Count();   
-
-                PP_Stop = 0;               
-
-                Task.Run(async () =>
-                {
-                    for (int i = 1; i < rowCount + 1; i++)
-                    {
-                        while (isPaused) await Task.Delay(100);  
-
-                        float q_current_1 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 1).Value.ToString());
-                        float q_current_2 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 2).Value.ToString());
-                        float q_current_3 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 3).Value.ToString());
-                        float q_current_4 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 4).Value.ToString());
-                        float q_current_5 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 5).Value.ToString());
-                        float q_current_6 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 6).Value.ToString());
-                        float q_current_7 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 7).Value.ToString());
-
-
-                        Txt1.Invoke(new Action(() =>
-                        {
-                            Txt1.Text = (q_current_1 / 2.0).ToString();
-                            Txt2.Text = (q_current_1 / 2.0).ToString();
-                            Txt3.Text = q_current_2.ToString();
-                            Txt4.Text = q_current_3.ToString();
-                            Txt5.Text = (q_current_4 / 2.0).ToString();
-                            Txt6.Text = (q_current_4 / 2.0).ToString();
-                            Txt7.Text = q_current_5.ToString();
-                            Txt8.Text = q_current_6.ToString();
-                            Txt9.Text = q_current_7.ToString();
-
-                            int index = this.dataGridView1.Rows.Add();
-                            for (int j = 0; j < chart1.Series.Count; j++)
-                            {
-                                double value = Convert.ToDouble(worksheet_PP.Cell(i, j + 1).Value.ToString());
-
-                                AddPointToSeries(j, i, value);
-
-                                dataGridView1.Rows[index].Cells[0].Value = i;
-                                dataGridView1.Rows[index].Cells[j+1].Value = value.ToString("F1");
-
-                            }
-
-                        }));
-
-                        glControl1.Invoke(new Action(() => glControl1_Paint(null, null)));
-
-                        await Task.Delay(2);
-                    }
-                    PP_Stop = 1;          
-                });
-            }
         }
 
     }

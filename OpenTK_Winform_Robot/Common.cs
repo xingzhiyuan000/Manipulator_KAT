@@ -240,6 +240,7 @@ namespace OpenTK_Winform_Robot
 
         public static double[] offset;
 
+        public static bool existModels = false;
 
         public static Matrix<double> q_lim = Matrix<double>.Build.DenseOfArray(new double[,] {
             { 0, 11500},

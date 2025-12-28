@@ -17,7 +17,7 @@ namespace OpenTK_Winform_Robot
 
             if (!isDecompose) 
             {
-                MessageBox.Show("解构失败");
+                MessageBox.Show("Deconstruction failed");
             }
             position = translation;
             scale = scaleVector;

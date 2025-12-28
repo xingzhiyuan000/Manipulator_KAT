@@ -55,7 +55,6 @@ namespace OpenTK_Winform_Robot
         {
             if (mChildren.Contains(obj))
             {
-                MessageBox.Show("该模型已经添加过！");
                 return;
             }
 

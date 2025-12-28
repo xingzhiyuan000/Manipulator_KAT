@@ -30,9 +30,9 @@ namespace OpenTK_Winform_Robot
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -74,6 +74,7 @@ namespace OpenTK_Winform_Robot
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.btn_show_workspace = new System.Windows.Forms.Button();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
@@ -160,6 +161,14 @@ namespace OpenTK_Winform_Robot
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.path_nodes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.q7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
@@ -242,26 +251,16 @@ namespace OpenTK_Winform_Robot
             this.textBox37 = new System.Windows.Forms.TextBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
-            this.textBox47 = new System.Windows.Forms.TextBox();
-            this.textBox46 = new System.Windows.Forms.TextBox();
-            this.textBox45 = new System.Windows.Forms.TextBox();
-            this.textBox44 = new System.Windows.Forms.TextBox();
+            this.Txt_model5 = new System.Windows.Forms.TextBox();
+            this.Txt_model4 = new System.Windows.Forms.TextBox();
+            this.Txt_model3 = new System.Windows.Forms.TextBox();
+            this.Txt_model2 = new System.Windows.Forms.TextBox();
             this.label52 = new System.Windows.Forms.Label();
             this.label50 = new System.Windows.Forms.Label();
             this.label48 = new System.Windows.Forms.Label();
             this.label49 = new System.Windows.Forms.Label();
             this.label51 = new System.Windows.Forms.Label();
-            this.textBox43 = new System.Windows.Forms.TextBox();
-            this.btn_show_workspace = new System.Windows.Forms.Button();
-            this.btn_pp_show = new System.Windows.Forms.Button();
-            this.path_nodes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.q7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Txt_model1 = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar7)).BeginInit();
@@ -716,6 +715,17 @@ namespace OpenTK_Winform_Robot
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Workspace";
             // 
+            // btn_show_workspace
+            // 
+            this.btn_show_workspace.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_show_workspace.Location = new System.Drawing.Point(7, 25);
+            this.btn_show_workspace.Name = "btn_show_workspace";
+            this.btn_show_workspace.Size = new System.Drawing.Size(216, 31);
+            this.btn_show_workspace.TabIndex = 15;
+            this.btn_show_workspace.Text = "Show";
+            this.btn_show_workspace.UseVisualStyleBackColor = true;
+            this.btn_show_workspace.Click += new System.EventHandler(this.btn_show_workspace_Click);
+            // 
             // richTextBox2
             // 
             this.richTextBox2.Location = new System.Drawing.Point(7, 59);
@@ -888,7 +898,6 @@ namespace OpenTK_Winform_Robot
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.btn_pp_show);
             this.groupBox3.Controls.Add(this.Txt_n_z);
             this.groupBox3.Controls.Add(this.Txt_a_z);
             this.groupBox3.Controls.Add(this.Txt_o_z);
@@ -1651,26 +1660,26 @@ namespace OpenTK_Winform_Robot
             // 
             // chart1
             // 
-            chartArea1.AxisX.TitleFont = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            chartArea1.AxisX2.TitleFont = new System.Drawing.Font("Times New Roman", 12F);
-            chartArea1.AxisY.TitleFont = new System.Drawing.Font("Times New Roman", 12F);
-            chartArea1.AxisY2.TitleFont = new System.Drawing.Font("Times New Roman", 12F);
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX.TitleFont = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            chartArea2.AxisX2.TitleFont = new System.Drawing.Font("Times New Roman", 12F);
+            chartArea2.AxisY.TitleFont = new System.Drawing.Font("Times New Roman", 12F);
+            chartArea2.AxisY2.TitleFont = new System.Drawing.Font("Times New Roman", 12F);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Font = new System.Drawing.Font("Times New Roman", 12F);
-            legend1.IsTextAutoFit = false;
-            legend1.Name = "Legend1";
-            legend1.TitleFont = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chart1.Legends.Add(legend1);
+            legend2.Font = new System.Drawing.Font("Times New Roman", 12F);
+            legend2.IsTextAutoFit = false;
+            legend2.Name = "Legend1";
+            legend2.TitleFont = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(3, 22);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(1573, 312);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -1706,6 +1715,54 @@ namespace OpenTK_Winform_Robot
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.Size = new System.Drawing.Size(1573, 226);
             this.dataGridView1.TabIndex = 22;
+            // 
+            // path_nodes
+            // 
+            this.path_nodes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.path_nodes.HeaderText = "path nodes";
+            this.path_nodes.Name = "path_nodes";
+            // 
+            // q1
+            // 
+            this.q1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q1.HeaderText = "q1/mm";
+            this.q1.Name = "q1";
+            // 
+            // q2
+            // 
+            this.q2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q2.HeaderText = "q2/°";
+            this.q2.Name = "q2";
+            // 
+            // q3
+            // 
+            this.q3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q3.HeaderText = "q3/°";
+            this.q3.Name = "q3";
+            // 
+            // q4
+            // 
+            this.q4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q4.HeaderText = "q4/mm";
+            this.q4.Name = "q4";
+            // 
+            // q5
+            // 
+            this.q5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q5.HeaderText = "q5/°";
+            this.q5.Name = "q5";
+            // 
+            // q6
+            // 
+            this.q6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q6.HeaderText = "q6/°";
+            this.q6.Name = "q6";
+            // 
+            // q7
+            // 
+            this.q7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.q7.HeaderText = "q7/°";
+            this.q7.Name = "q7";
             // 
             // tableLayoutPanel6
             // 
@@ -1798,7 +1855,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q2_offset.Name = "Txt_q2_offset";
             this.Txt_q2_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q2_offset.TabIndex = 32;
-            this.Txt_q2_offset.Text = "1.57";
             this.Txt_q2_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q3_offset
@@ -1808,7 +1864,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q3_offset.Name = "Txt_q3_offset";
             this.Txt_q3_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q3_offset.TabIndex = 31;
-            this.Txt_q3_offset.Text = "-1.57";
             this.Txt_q3_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q5_offset
@@ -1818,7 +1873,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q5_offset.Name = "Txt_q5_offset";
             this.Txt_q5_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q5_offset.TabIndex = 30;
-            this.Txt_q5_offset.Text = "-1.57";
             this.Txt_q5_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q1_offset
@@ -1828,7 +1882,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q1_offset.Name = "Txt_q1_offset";
             this.Txt_q1_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q1_offset.TabIndex = 29;
-            this.Txt_q1_offset.Text = "3288";
             this.Txt_q1_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q4_offset
@@ -1838,7 +1891,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q4_offset.Name = "Txt_q4_offset";
             this.Txt_q4_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q4_offset.TabIndex = 28;
-            this.Txt_q4_offset.Text = "2281";
             this.Txt_q4_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q6_offset
@@ -1848,7 +1900,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q6_offset.Name = "Txt_q6_offset";
             this.Txt_q6_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q6_offset.TabIndex = 27;
-            this.Txt_q6_offset.Text = "1.57";
             this.Txt_q6_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q7_offset
@@ -1858,7 +1909,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q7_offset.Name = "Txt_q7_offset";
             this.Txt_q7_offset.Size = new System.Drawing.Size(47, 26);
             this.Txt_q7_offset.TabIndex = 26;
-            this.Txt_q7_offset.Text = "0";
             this.Txt_q7_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label54
@@ -1878,7 +1928,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q7_max.Name = "Txt_q7_max";
             this.Txt_q7_max.Size = new System.Drawing.Size(49, 26);
             this.Txt_q7_max.TabIndex = 24;
-            this.Txt_q7_max.Text = "180";
             this.Txt_q7_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q6_max
@@ -1888,7 +1937,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q6_max.Name = "Txt_q6_max";
             this.Txt_q6_max.Size = new System.Drawing.Size(47, 26);
             this.Txt_q6_max.TabIndex = 23;
-            this.Txt_q6_max.Text = "30";
             this.Txt_q6_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q5_max
@@ -1898,7 +1946,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q5_max.Name = "Txt_q5_max";
             this.Txt_q5_max.Size = new System.Drawing.Size(47, 26);
             this.Txt_q5_max.TabIndex = 22;
-            this.Txt_q5_max.Text = "75";
             this.Txt_q5_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q4_max
@@ -1908,7 +1955,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q4_max.Name = "Txt_q4_max";
             this.Txt_q4_max.Size = new System.Drawing.Size(47, 26);
             this.Txt_q4_max.TabIndex = 21;
-            this.Txt_q4_max.Text = "3000";
             this.Txt_q4_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q3_max
@@ -1918,7 +1964,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q3_max.Name = "Txt_q3_max";
             this.Txt_q3_max.Size = new System.Drawing.Size(47, 26);
             this.Txt_q3_max.TabIndex = 20;
-            this.Txt_q3_max.Text = "40";
             this.Txt_q3_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q2_max
@@ -1928,7 +1973,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q2_max.Name = "Txt_q2_max";
             this.Txt_q2_max.Size = new System.Drawing.Size(47, 26);
             this.Txt_q2_max.TabIndex = 19;
-            this.Txt_q2_max.Text = "180";
             this.Txt_q2_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q1_max
@@ -1938,7 +1982,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q1_max.Name = "Txt_q1_max";
             this.Txt_q1_max.Size = new System.Drawing.Size(47, 26);
             this.Txt_q1_max.TabIndex = 18;
-            this.Txt_q1_max.Text = "11500";
             this.Txt_q1_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q7_min
@@ -1948,7 +1991,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q7_min.Name = "Txt_q7_min";
             this.Txt_q7_min.Size = new System.Drawing.Size(49, 26);
             this.Txt_q7_min.TabIndex = 17;
-            this.Txt_q7_min.Text = "-180";
             this.Txt_q7_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q6_min
@@ -1958,7 +2000,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q6_min.Name = "Txt_q6_min";
             this.Txt_q6_min.Size = new System.Drawing.Size(47, 26);
             this.Txt_q6_min.TabIndex = 16;
-            this.Txt_q6_min.Text = "-105";
             this.Txt_q6_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q5_min
@@ -1968,7 +2009,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q5_min.Name = "Txt_q5_min";
             this.Txt_q5_min.Size = new System.Drawing.Size(47, 26);
             this.Txt_q5_min.TabIndex = 15;
-            this.Txt_q5_min.Text = "-75";
             this.Txt_q5_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q4_min
@@ -1978,7 +2018,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q4_min.Name = "Txt_q4_min";
             this.Txt_q4_min.Size = new System.Drawing.Size(47, 26);
             this.Txt_q4_min.TabIndex = 14;
-            this.Txt_q4_min.Text = "0";
             this.Txt_q4_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q3_min
@@ -1988,7 +2027,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q3_min.Name = "Txt_q3_min";
             this.Txt_q3_min.Size = new System.Drawing.Size(47, 26);
             this.Txt_q3_min.TabIndex = 13;
-            this.Txt_q3_min.Text = "-35";
             this.Txt_q3_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_q2_min
@@ -1998,7 +2036,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q2_min.Name = "Txt_q2_min";
             this.Txt_q2_min.Size = new System.Drawing.Size(47, 26);
             this.Txt_q2_min.TabIndex = 12;
-            this.Txt_q2_min.Text = "-180";
             this.Txt_q2_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label37
@@ -2098,7 +2135,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_q1_min.Name = "Txt_q1_min";
             this.Txt_q1_min.Size = new System.Drawing.Size(47, 26);
             this.Txt_q1_min.TabIndex = 11;
-            this.Txt_q1_min.Text = "0";
             this.Txt_q1_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // groupBox6
@@ -2190,7 +2226,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_d_8.Name = "Txt_d_8";
             this.Txt_d_8.Size = new System.Drawing.Size(49, 26);
             this.Txt_d_8.TabIndex = 45;
-            this.Txt_d_8.Text = "587.431";
             this.Txt_d_8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_theta_8
@@ -2200,7 +2235,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_theta_8.Name = "Txt_theta_8";
             this.Txt_theta_8.Size = new System.Drawing.Size(49, 26);
             this.Txt_theta_8.TabIndex = 44;
-            this.Txt_theta_8.Text = "-1.57";
             this.Txt_theta_8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_8
@@ -2210,7 +2244,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_8.Name = "Txt_a_8";
             this.Txt_a_8.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_8.TabIndex = 43;
-            this.Txt_a_8.Text = "0";
             this.Txt_a_8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_8
@@ -2220,7 +2253,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_8.Name = "Txt_alpha_8";
             this.Txt_alpha_8.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_8.TabIndex = 42;
-            this.Txt_alpha_8.Text = "0";
             this.Txt_alpha_8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label53
@@ -2248,7 +2280,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_d_2.Name = "Txt_d_2";
             this.Txt_d_2.Size = new System.Drawing.Size(49, 26);
             this.Txt_d_2.TabIndex = 37;
-            this.Txt_d_2.Text = "230.5";
             this.Txt_d_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label47
@@ -2268,7 +2299,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_7.Name = "Txt_a_7";
             this.Txt_a_7.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_7.TabIndex = 24;
-            this.Txt_a_7.Text = "70.114";
             this.Txt_a_7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_6
@@ -2278,7 +2308,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_6.Name = "Txt_a_6";
             this.Txt_a_6.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_6.TabIndex = 23;
-            this.Txt_a_6.Text = "280";
             this.Txt_a_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_5
@@ -2288,7 +2317,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_5.Name = "Txt_a_5";
             this.Txt_a_5.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_5.TabIndex = 22;
-            this.Txt_a_5.Text = "0";
             this.Txt_a_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_4
@@ -2298,7 +2326,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_4.Name = "Txt_a_4";
             this.Txt_a_4.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_4.TabIndex = 21;
-            this.Txt_a_4.Text = "559";
             this.Txt_a_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_3
@@ -2308,7 +2335,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_3.Name = "Txt_a_3";
             this.Txt_a_3.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_3.TabIndex = 20;
-            this.Txt_a_3.Text = "40";
             this.Txt_a_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_2
@@ -2318,7 +2344,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_2.Name = "Txt_a_2";
             this.Txt_a_2.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_2.TabIndex = 19;
-            this.Txt_a_2.Text = "0";
             this.Txt_a_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_a_1
@@ -2328,7 +2353,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_a_1.Name = "Txt_a_1";
             this.Txt_a_1.Size = new System.Drawing.Size(49, 26);
             this.Txt_a_1.TabIndex = 18;
-            this.Txt_a_1.Text = "0";
             this.Txt_a_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_7
@@ -2338,7 +2362,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_7.Name = "Txt_alpha_7";
             this.Txt_alpha_7.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_7.TabIndex = 17;
-            this.Txt_alpha_7.Text = "1.57";
             this.Txt_alpha_7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_6
@@ -2348,7 +2371,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_6.Name = "Txt_alpha_6";
             this.Txt_alpha_6.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_6.TabIndex = 16;
-            this.Txt_alpha_6.Text = "1.57";
             this.Txt_alpha_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_5
@@ -2358,7 +2380,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_5.Name = "Txt_alpha_5";
             this.Txt_alpha_5.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_5.TabIndex = 15;
-            this.Txt_alpha_5.Text = "-1.57";
             this.Txt_alpha_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_4
@@ -2368,7 +2389,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_4.Name = "Txt_alpha_4";
             this.Txt_alpha_4.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_4.TabIndex = 14;
-            this.Txt_alpha_4.Text = "1.57";
             this.Txt_alpha_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_3
@@ -2378,7 +2398,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_3.Name = "Txt_alpha_3";
             this.Txt_alpha_3.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_3.TabIndex = 13;
-            this.Txt_alpha_3.Text = "-1.57";
             this.Txt_alpha_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_alpha_2
@@ -2388,7 +2407,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_2.Name = "Txt_alpha_2";
             this.Txt_alpha_2.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_2.TabIndex = 12;
-            this.Txt_alpha_2.Text = "-1.57";
             this.Txt_alpha_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label32
@@ -2487,7 +2505,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_alpha_1.Name = "Txt_alpha_1";
             this.Txt_alpha_1.Size = new System.Drawing.Size(49, 26);
             this.Txt_alpha_1.TabIndex = 11;
-            this.Txt_alpha_1.Text = "0";
             this.Txt_alpha_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label46
@@ -2507,7 +2524,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_theta_1.Name = "Txt_theta_1";
             this.Txt_theta_1.Size = new System.Drawing.Size(49, 26);
             this.Txt_theta_1.TabIndex = 27;
-            this.Txt_theta_1.Text = "0";
             this.Txt_theta_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox34
@@ -2535,7 +2551,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_theta_4.Name = "Txt_theta_4";
             this.Txt_theta_4.Size = new System.Drawing.Size(49, 26);
             this.Txt_theta_4.TabIndex = 30;
-            this.Txt_theta_4.Text = "-1.57";
             this.Txt_theta_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox36
@@ -2572,7 +2587,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_d_3.Name = "Txt_d_3";
             this.Txt_d_3.Size = new System.Drawing.Size(49, 26);
             this.Txt_d_3.TabIndex = 33;
-            this.Txt_d_3.Text = "0";
             this.Txt_d_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_d_7
@@ -2582,7 +2596,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_d_7.Name = "Txt_d_7";
             this.Txt_d_7.Size = new System.Drawing.Size(49, 26);
             this.Txt_d_7.TabIndex = 36;
-            this.Txt_d_7.Text = "0";
             this.Txt_d_7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_d_6
@@ -2592,7 +2605,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_d_6.Name = "Txt_d_6";
             this.Txt_d_6.Size = new System.Drawing.Size(49, 26);
             this.Txt_d_6.TabIndex = 39;
-            this.Txt_d_6.Text = "0";
             this.Txt_d_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Txt_d_5
@@ -2602,7 +2614,6 @@ namespace OpenTK_Winform_Robot
             this.Txt_d_5.Name = "Txt_d_5";
             this.Txt_d_5.Size = new System.Drawing.Size(49, 26);
             this.Txt_d_5.TabIndex = 38;
-            this.Txt_d_5.Text = "-741";
             this.Txt_d_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox37
@@ -2632,16 +2643,16 @@ namespace OpenTK_Winform_Robot
             this.tableLayoutPanel9.ColumnCount = 2;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.tableLayoutPanel9.Controls.Add(this.textBox47, 1, 4);
-            this.tableLayoutPanel9.Controls.Add(this.textBox46, 1, 3);
-            this.tableLayoutPanel9.Controls.Add(this.textBox45, 1, 2);
-            this.tableLayoutPanel9.Controls.Add(this.textBox44, 1, 1);
+            this.tableLayoutPanel9.Controls.Add(this.Txt_model5, 1, 4);
+            this.tableLayoutPanel9.Controls.Add(this.Txt_model4, 1, 3);
+            this.tableLayoutPanel9.Controls.Add(this.Txt_model3, 1, 2);
+            this.tableLayoutPanel9.Controls.Add(this.Txt_model2, 1, 1);
             this.tableLayoutPanel9.Controls.Add(this.label52, 0, 2);
             this.tableLayoutPanel9.Controls.Add(this.label50, 0, 1);
             this.tableLayoutPanel9.Controls.Add(this.label48, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.label49, 0, 3);
             this.tableLayoutPanel9.Controls.Add(this.label51, 0, 4);
-            this.tableLayoutPanel9.Controls.Add(this.textBox43, 1, 0);
+            this.tableLayoutPanel9.Controls.Add(this.Txt_model1, 1, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 22);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -2654,41 +2665,37 @@ namespace OpenTK_Winform_Robot
             this.tableLayoutPanel9.Size = new System.Drawing.Size(463, 221);
             this.tableLayoutPanel9.TabIndex = 0;
             // 
-            // textBox47
+            // Txt_model5
             // 
-            this.textBox47.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBox47.Location = new System.Drawing.Point(113, 183);
-            this.textBox47.Name = "textBox47";
-            this.textBox47.Size = new System.Drawing.Size(330, 26);
-            this.textBox47.TabIndex = 16;
-            this.textBox47.Text = "/Resources/FBX/Mill04.fbx";
+            this.Txt_model5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Txt_model5.Location = new System.Drawing.Point(113, 183);
+            this.Txt_model5.Name = "Txt_model5";
+            this.Txt_model5.Size = new System.Drawing.Size(330, 26);
+            this.Txt_model5.TabIndex = 16;
             // 
-            // textBox46
+            // Txt_model4
             // 
-            this.textBox46.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBox46.Location = new System.Drawing.Point(113, 138);
-            this.textBox46.Name = "textBox46";
-            this.textBox46.Size = new System.Drawing.Size(330, 26);
-            this.textBox46.TabIndex = 15;
-            this.textBox46.Text = "/Resources/FBX/Mill03.fbx";
+            this.Txt_model4.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Txt_model4.Location = new System.Drawing.Point(113, 138);
+            this.Txt_model4.Name = "Txt_model4";
+            this.Txt_model4.Size = new System.Drawing.Size(330, 26);
+            this.Txt_model4.TabIndex = 15;
             // 
-            // textBox45
+            // Txt_model3
             // 
-            this.textBox45.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBox45.Location = new System.Drawing.Point(113, 95);
-            this.textBox45.Name = "textBox45";
-            this.textBox45.Size = new System.Drawing.Size(330, 26);
-            this.textBox45.TabIndex = 14;
-            this.textBox45.Text = "/Resources/FBX/Mill02.fbx";
+            this.Txt_model3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Txt_model3.Location = new System.Drawing.Point(113, 95);
+            this.Txt_model3.Name = "Txt_model3";
+            this.Txt_model3.Size = new System.Drawing.Size(330, 26);
+            this.Txt_model3.TabIndex = 14;
             // 
-            // textBox44
+            // Txt_model2
             // 
-            this.textBox44.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBox44.Location = new System.Drawing.Point(113, 52);
-            this.textBox44.Name = "textBox44";
-            this.textBox44.Size = new System.Drawing.Size(330, 26);
-            this.textBox44.TabIndex = 13;
-            this.textBox44.Text = "/Resources/FBX/Mill01.fbx\r\n";
+            this.Txt_model2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Txt_model2.Location = new System.Drawing.Point(113, 52);
+            this.Txt_model2.Name = "Txt_model2";
+            this.Txt_model2.Size = new System.Drawing.Size(330, 26);
+            this.Txt_model2.TabIndex = 13;
             // 
             // label52
             // 
@@ -2740,84 +2747,13 @@ namespace OpenTK_Winform_Robot
             this.label51.Text = "model 5";
             this.label51.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox43
+            // Txt_model1
             // 
-            this.textBox43.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBox43.Location = new System.Drawing.Point(113, 9);
-            this.textBox43.Name = "textBox43";
-            this.textBox43.Size = new System.Drawing.Size(330, 26);
-            this.textBox43.TabIndex = 12;
-            this.textBox43.Text = "/Resources/FBX/Manipulator.fbx";
-            // 
-            // btn_show_workspace
-            // 
-            this.btn_show_workspace.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_show_workspace.Location = new System.Drawing.Point(7, 25);
-            this.btn_show_workspace.Name = "btn_show_workspace";
-            this.btn_show_workspace.Size = new System.Drawing.Size(216, 31);
-            this.btn_show_workspace.TabIndex = 15;
-            this.btn_show_workspace.Text = "Show";
-            this.btn_show_workspace.UseVisualStyleBackColor = true;
-            this.btn_show_workspace.Click += new System.EventHandler(this.btn_show_workspace_Click);
-            // 
-            // btn_pp_show
-            // 
-            this.btn_pp_show.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_pp_show.Location = new System.Drawing.Point(190, 0);
-            this.btn_pp_show.Name = "btn_pp_show";
-            this.btn_pp_show.Size = new System.Drawing.Size(101, 35);
-            this.btn_pp_show.TabIndex = 13;
-            this.btn_pp_show.Text = "Path planning";
-            this.btn_pp_show.UseVisualStyleBackColor = true;
-            this.btn_pp_show.Click += new System.EventHandler(this.btn_pp_show_Click);
-            // 
-            // path_nodes
-            // 
-            this.path_nodes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.path_nodes.HeaderText = "path nodes";
-            this.path_nodes.Name = "path_nodes";
-            // 
-            // q1
-            // 
-            this.q1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q1.HeaderText = "q1/mm";
-            this.q1.Name = "q1";
-            // 
-            // q2
-            // 
-            this.q2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q2.HeaderText = "q2/°";
-            this.q2.Name = "q2";
-            // 
-            // q3
-            // 
-            this.q3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q3.HeaderText = "q3/°";
-            this.q3.Name = "q3";
-            // 
-            // q4
-            // 
-            this.q4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q4.HeaderText = "q4/mm";
-            this.q4.Name = "q4";
-            // 
-            // q5
-            // 
-            this.q5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q5.HeaderText = "q5/°";
-            this.q5.Name = "q5";
-            // 
-            // q6
-            // 
-            this.q6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q6.HeaderText = "q6/°";
-            this.q6.Name = "q6";
-            // 
-            // q7
-            // 
-            this.q7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.q7.HeaderText = "q7/°";
-            this.q7.Name = "q7";
+            this.Txt_model1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Txt_model1.Location = new System.Drawing.Point(113, 9);
+            this.Txt_model1.Name = "Txt_model1";
+            this.Txt_model1.Size = new System.Drawing.Size(330, 26);
+            this.Txt_model1.TabIndex = 12;
             // 
             // Form1
             // 
@@ -3077,16 +3013,16 @@ namespace OpenTK_Winform_Robot
         private System.Windows.Forms.TextBox textBox37;
         private System.Windows.Forms.TextBox textBox42;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
-        private System.Windows.Forms.TextBox textBox47;
-        private System.Windows.Forms.TextBox textBox46;
-        private System.Windows.Forms.TextBox textBox45;
-        private System.Windows.Forms.TextBox textBox44;
+        private System.Windows.Forms.TextBox Txt_model5;
+        private System.Windows.Forms.TextBox Txt_model4;
+        private System.Windows.Forms.TextBox Txt_model3;
+        private System.Windows.Forms.TextBox Txt_model2;
         private System.Windows.Forms.Label label52;
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.Label label49;
         private System.Windows.Forms.Label label51;
-        private System.Windows.Forms.TextBox textBox43;
+        private System.Windows.Forms.TextBox Txt_model1;
         public System.Windows.Forms.TextBox Txt_theta_4;
         private System.Windows.Forms.TextBox Txt_d_8;
         private System.Windows.Forms.TextBox Txt_theta_8;
@@ -3104,7 +3040,6 @@ namespace OpenTK_Winform_Robot
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Button btn_show_workspace;
-        private System.Windows.Forms.Button btn_pp_show;
         private System.Windows.Forms.DataGridViewTextBoxColumn path_nodes;
         private System.Windows.Forms.DataGridViewTextBoxColumn q1;
         private System.Windows.Forms.DataGridViewTextBoxColumn q2;

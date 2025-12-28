@@ -110,7 +110,7 @@ namespace OpenTK_Winform_Robot
                     {
                         GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX+i, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
                     }
-                    else MessageBox.Show(paths[i].ToString() + "天空盒图片读取失败");
+                    else MessageBox.Show(paths[i].ToString() + "Failed to load skybox image");
                 }
             }
 

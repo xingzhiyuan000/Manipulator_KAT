@@ -25,7 +25,7 @@ namespace OpenTK_Winform_Robot
 
             if (scene == null || (scene.SceneFlags & SceneFlags.Incomplete) != 0 || scene.RootNode == null)
             {
-                MessageBox.Show("模型读取失败");
+                MessageBox.Show("Model Import Failed");
                 return null;
             }
             

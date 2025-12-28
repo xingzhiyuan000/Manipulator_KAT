@@ -41,12 +41,12 @@ namespace OpenTK_Winform_Robot
                 }
                 else
                 {
-                    Console.WriteLine("跳过重复点：" + point);
+
                 }
             }
             else
             {
-                Console.WriteLine("跳过了 (0,0,0) 点，未添加到轨迹中！");
+
             }
         }
         public void ClearPoints()

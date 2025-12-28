@@ -313,7 +313,7 @@ namespace OpenTK_Winform_Robot
                     result = mAxisShader;
                     break;
                 default:
-                    MessageBox.Show("未找到Shader类型");
+                    MessageBox.Show("No corresponding shader was found");
                     break;
             }
             return result;
