@@ -18,10 +18,10 @@ namespace OpenTK_Winform_Robot
         private Shader mPhongInstanceShader = null;
         private Shader mSphereShader = null;
         private Shader mAxisShader = null;
-        private Shader mLineShader = null;          // 画线用的Shader
+        private Shader mLineShader = null;           
 
-        public List<Mesh> mOpacityObjects=new List<Mesh>();         //【不透明物体】
-        public List<Mesh> mTransparentObjects = new List<Mesh>();   //【透明物体】
+        public List<Mesh> mOpacityObjects=new List<Mesh>();         
+        public List<Mesh> mTransparentObjects = new List<Mesh>();   
 
         
         public Renderer()
@@ -37,15 +37,6 @@ namespace OpenTK_Winform_Robot
             mPhongInstanceShader = new Shader(projectRoot + "/GLSL/phongInstance.vert", projectRoot + "/GLSL/phongInstance.frag");
             mSphereShader = new Shader(projectRoot + "/GLSL/sphere.vert", projectRoot + "/GLSL/sphere.frag");
             mLineShader = new Shader(projectRoot + "/GLSL/line.vert", projectRoot + "/GLSL/line.frag");
-
-            //mPhongShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phong.vert", Directory.GetCurrentDirectory() + "/GLSL/phong.frag");
-            //mWhiteShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/white.vert", Directory.GetCurrentDirectory() + "/GLSL/white.frag");
-            //mDepthShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/depth.vert", Directory.GetCurrentDirectory() + "/GLSL/depth.frag");
-            //mCubeShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/cube.vert", Directory.GetCurrentDirectory() + "/GLSL/cube.frag");
-            //mPhongEnvShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phongEnv.vert", Directory.GetCurrentDirectory() + "/GLSL/phongEnv.frag");
-            //mPhongInstanceShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phongInstance.vert", Directory.GetCurrentDirectory() + "/GLSL/phongInstance.frag");
-            //mSphereShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/sphere.vert", Directory.GetCurrentDirectory() + "/GLSL/sphere.frag");
-            //mLineShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/line.vert", Directory.GetCurrentDirectory() + "/GLSL/line.frag");
         }
 
         void renderObject(
@@ -57,77 +48,66 @@ namespace OpenTK_Winform_Robot
         float shiness
         )
         {
-            //1 判断是Mesh还是Object，如果是Mesh需要渲染
             if (obj!=null && (obj.getType()==ObjectType.Mesh || obj.getType()== ObjectType.InstancedMesh))
             {
                 var mesh =(Mesh)obj ;
                 var geometry = mesh.mGeometry;
                 var material = mesh.mMaterial;
 
-                //1.设置渲染状态-【深度检查】
                 setDepthState(material);
 
-                //2. 设置【polygonOffset】
                 setPolygonOffsetState(material);
 
-                //3. 设置【深度测试】
                 setStencilState(material);
 
-                //设置【面剔除】
                 setFaceCullingState(material);
 
-                //设置【颜色混合】
                 setBlendState(material);
 
-                //1 决定用那个Shader
                 Shader shader = pickShader(material.mType);
 
-                //2 更新shader的uniform
-                shader.Begin(); //使用的Shader程序
+                shader.Begin(); 
                 switch (material.mType)
                 {
                     case MaterialType.PhongMaterial:
                         {
                             
-                            shader.SetInt("sampler", 0); //【采样器与纹理单元挂钩】
+                            shader.SetInt("sampler", 0); 
                             material.mDiffuse.Bind();
 
-                            shader.SetInt("specularMaskSampler", 1); //【采样器与纹理单元挂钩】
+                            shader.SetInt("specularMaskSampler", 1); 
                             if (material.mSpecularMask!=null) material.mSpecularMask.Bind();
                             
-                            //mvp
-                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                            shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                            shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
-                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetModelMatrix()))); // 计算法线矩阵
+                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetModelMatrix())));  
 
-                            shader.SetMatrix3("normalMatrix", normalMatrix); //设置【法线矩阵】
+                            shader.SetMatrix3("normalMatrix", normalMatrix); 
 
-                            shader.SetVector3("lightColor", light.mLightColor); //【平行光强度】
-                            shader.SetVector3("lightDirection", light.mDirection); //【平行光方向】
+                            shader.SetVector3("lightColor", light.mLightColor); 
+                            shader.SetVector3("lightDirection", light.mDirection); 
                             shader.SetFloat1("specularIntensity", specularIntensity);
-                            shader.SetFloat1("shiness", shiness); //【光斑大小】
-                            shader.SetFloat1("opacity", material.mOpacity); //【光斑大小】
+                            shader.SetFloat1("shiness", shiness); 
+                            shader.SetFloat1("opacity", material.mOpacity); 
 
-                            shader.SetVector3("ambientColor", light.mAmbientColor);//【环境光强度】
-                            shader.SetVector3("cameraPosition", camera._position); //【相机信息】
+                            shader.SetVector3("ambientColor", light.mAmbientColor);
+                            shader.SetVector3("cameraPosition", camera._position); 
                             break;
                         }
                     case MaterialType.WhiteMaterial:
                         {
-                            //mvp
-                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                            shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                            shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
                             break;
                         }
                     case MaterialType.DepthMaterial:
-                        //mvp
-                        shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                        shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                        shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                        shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                        shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                        shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
                         shader.SetFloat1("near", camera.pNear);
                         shader.SetFloat1("far", camera.pFar);
@@ -137,71 +117,68 @@ namespace OpenTK_Winform_Robot
 
                         mesh.SetPosition(camera._position);
 
-                        shader.SetInt("cubeSampler", 0); //【采样器与纹理单元挂钩】
+                        shader.SetInt("cubeSampler", 0); 
                         
-                        //mvp
-                        shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                        shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                        shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                        shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                        shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                        shader.SetMatrix4("projectionMatrix", projectionMatrix); 
                         
                         material.mDiffuse.Bind();
 
                         break;
                     case MaterialType.PhongEnvMaterial:
                         {
-                            shader.SetInt("sampler", 0); //【采样器与纹理单元挂钩】
+                            shader.SetInt("sampler", 0); 
                             material.mDiffuse.Bind();
 
-                            shader.SetInt("envSampler", 1); //【采样器与纹理单元挂钩】-填空盒环境光
+                            shader.SetInt("envSampler", 1); 
                             material.mEnv.Bind();
 
-                            shader.SetInt("specularMaskSampler", 2); //【采样器与纹理单元挂钩】-高光
+                            shader.SetInt("specularMaskSampler", 2); 
                             if (material.mSpecularMask != null) material.mSpecularMask.Bind();
 
-                            //mvp
-                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                            shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                            shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
-                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetModelMatrix()))); // 计算法线矩阵
+                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetModelMatrix())));  
 
-                            shader.SetMatrix3("normalMatrix", normalMatrix); //设置【法线矩阵】
+                            shader.SetMatrix3("normalMatrix", normalMatrix); 
 
-                            shader.SetVector3("lightColor", light.mLightColor); //【平行光强度】
-                            shader.SetVector3("lightDirection", light.mDirection); //【平行光方向】
+                            shader.SetVector3("lightColor", light.mLightColor); 
+                            shader.SetVector3("lightDirection", light.mDirection); 
                             shader.SetFloat1("specularIntensity", specularIntensity);
-                            shader.SetFloat1("shiness", shiness); //【光斑大小】
+                            shader.SetFloat1("shiness", shiness); 
 
-                            shader.SetVector3("ambientColor", light.mAmbientColor);//【环境光强度】
-                            shader.SetVector3("cameraPosition", camera._position); //【相机信息】
+                            shader.SetVector3("ambientColor", light.mAmbientColor);
+                            shader.SetVector3("cameraPosition", camera._position); 
                             break;
                         }
                     case MaterialType.PhongInstanceMaterial:
                         {
                             InstancedMesh im = (InstancedMesh)mesh;
-                            shader.SetInt("sampler", 0); //【采样器与纹理单元挂钩】
+                            shader.SetInt("sampler", 0); 
                             material.mDiffuse.Bind();
 
-                            shader.SetInt("specularMaskSampler", 1); //【采样器与纹理单元挂钩】
+                            shader.SetInt("specularMaskSampler", 1); 
                             if (material.mSpecularMask != null) material.mSpecularMask.Bind();
 
-                            //mvp
-                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                            shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                            shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
-                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetModelMatrix()))); // 计算法线矩阵
+                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetModelMatrix())));  
 
-                            shader.SetMatrix3("normalMatrix", normalMatrix); //设置【法线矩阵】
+                            shader.SetMatrix3("normalMatrix", normalMatrix); 
 
-                            shader.SetVector3("lightColor", light.mLightColor); //【平行光强度】
-                            shader.SetVector3("lightDirection", light.mDirection); //【平行光方向】
+                            shader.SetVector3("lightColor", light.mLightColor); 
+                            shader.SetVector3("lightDirection", light.mDirection); 
                             shader.SetFloat1("specularIntensity", specularIntensity);
-                            shader.SetFloat1("shiness", shiness); //【光斑大小】
-                            shader.SetFloat1("opacity", material.mOpacity); //【光斑大小】
+                            shader.SetFloat1("shiness", shiness); 
+                            shader.SetFloat1("opacity", material.mOpacity); 
 
-                            shader.SetVector3("ambientColor", light.mAmbientColor);//【环境光强度】
-                            shader.SetVector3("cameraPosition", camera._position); //【相机信息】
+                            shader.SetVector3("ambientColor", light.mAmbientColor);
+                            shader.SetVector3("cameraPosition", camera._position); 
 
                             shader.SetMatrix4Array("matrices",im.mInstanceMatrices,im.mInstanceCount);
                             break;
@@ -210,12 +187,11 @@ namespace OpenTK_Winform_Robot
                         {
                             mesh.SetPosition(camera._position);
 
-                            shader.SetInt("sphericalSampler", 0); //【采样器与纹理单元挂钩】
+                            shader.SetInt("sphericalSampler", 0); 
 
-                            //mvp
-                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); //设置【模型变换矩阵】
-                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                            shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                            shader.SetMatrix4("transform", mesh.GetModelMatrix()); 
+                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                            shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
                             material.mDiffuse.Bind();
 
@@ -223,31 +199,28 @@ namespace OpenTK_Winform_Robot
                         }
                     case MaterialType.AxisMaterial:
                         {
-                            //Vector3 offset = new Vector3(-10.0f, 0.0f, 0.0f);
-                            //mesh.SetPosition(camera._position + offset);
-                            shader.SetInt("sampler", 0); //【采样器与纹理单元挂钩】
+                            shader.SetInt("sampler", 0); 
                             material.mDiffuse.Bind();
 
-                            shader.SetInt("specularMaskSampler", 1); //【采样器与纹理单元挂钩】
+                            shader.SetInt("specularMaskSampler", 1); 
                             if (material.mSpecularMask != null) material.mSpecularMask.Bind();
 
-                            //mvp
-                            shader.SetMatrix4("transform", mesh.GetAxisModelMatrix()); //设置【模型变换矩阵】
-                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); //设置【摄像机变换矩阵】
-                            shader.SetMatrix4("projectionMatrix", projectionMatrix); //设置【透视变换矩阵】
+                            shader.SetMatrix4("transform", mesh.GetAxisModelMatrix()); 
+                            shader.SetMatrix4("viewMatrix", camera.GetViewMatrix()); 
+                            shader.SetMatrix4("projectionMatrix", projectionMatrix); 
 
-                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetAxisModelMatrix()))); // 计算法线矩阵
+                            Matrix3 normalMatrix = Matrix3.Transpose(Matrix3.Invert(new Matrix3(mesh.GetAxisModelMatrix())));  
 
-                            shader.SetMatrix3("normalMatrix", normalMatrix); //设置【法线矩阵】
+                            shader.SetMatrix3("normalMatrix", normalMatrix); 
 
-                            shader.SetVector3("lightColor", light.mLightColor); //【平行光强度】
-                            shader.SetVector3("lightDirection", light.mDirection); //【平行光方向】
+                            shader.SetVector3("lightColor", light.mLightColor); 
+                            shader.SetVector3("lightDirection", light.mDirection); 
                             shader.SetFloat1("specularIntensity", specularIntensity);
-                            shader.SetFloat1("shiness", shiness); //【光斑大小】
-                            shader.SetFloat1("opacity", material.mOpacity); //【光斑大小】
+                            shader.SetFloat1("shiness", shiness); 
+                            shader.SetFloat1("opacity", material.mOpacity); 
 
-                            shader.SetVector3("ambientColor", light.mAmbientColor);//【环境光强度】
-                            shader.SetVector3("cameraPosition", camera._position); //【相机信息】
+                            shader.SetVector3("ambientColor", light.mAmbientColor);
+                            shader.SetVector3("cameraPosition", camera._position); 
                             break;
                         }
                     default:
@@ -255,9 +228,8 @@ namespace OpenTK_Winform_Robot
                 }
 
 
-                //3 绑定Vao 
-                GL.BindVertexArray(geometry.getVao()); //绑定VAO
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, geometry.getEbo());//绑定EBO
+                GL.BindVertexArray(geometry.getVao()); 
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, geometry.getEbo());
                 if (obj.getType() == ObjectType.InstancedMesh)
                 {
                     InstancedMesh im = (InstancedMesh)mesh;
@@ -267,15 +239,8 @@ namespace OpenTK_Winform_Robot
                 else GL.DrawElements(PrimitiveType.Triangles, geometry.getIndicesCount(), DrawElementsType.UnsignedInt, 0); ;
 
 
-                //shader.End();
             }
 
-            ////2 遍历object的子节点，对每个子节点都需要调用renderObject
-            //var children = obj.getChild();
-            //for (int i = 0; i < children.Count; i++)
-            //{
-            //    renderObject(children[i], camera, light, projectionMatrix, specularIntensity, shiness);
-            //}
         }
 
         public void Render
@@ -288,46 +253,24 @@ namespace OpenTK_Winform_Robot
         float shiness
         )
         {
-            GL.Enable(EnableCap.DepthTest);//开启【深度检测】-遮挡关系
-            GL.DepthFunc(DepthFunction.Less);//【深度检测方式】-数值小的通过
-            GL.DepthMask(true); //打开【深度写入】
-            GL.Disable(EnableCap.PolygonOffsetFill);//关闭【PolygonOffset】
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Less);
+            GL.DepthMask(true); 
+            GL.Disable(EnableCap.PolygonOffsetFill);
             GL.Disable(EnableCap.PolygonOffsetLine);
 
-            GL.Disable(EnableCap.Blend); //默认关闭【颜色混合】
+            GL.Disable(EnableCap.Blend); 
 
-            GL.Enable(EnableCap.StencilTest);//开启【模版测试】-选中状态
-            GL.StencilOp(StencilOp.Keep,StencilOp.Keep,StencilOp.Keep); //设置【模版测试】状态
-            GL.StencilMask(0xFF);//开启【模版测试】写入-保证模版缓冲可以被清理
+            GL.Enable(EnableCap.StencilTest);
+            GL.StencilOp(StencilOp.Keep,StencilOp.Keep,StencilOp.Keep); 
+            GL.StencilMask(0xFF);
 
-            //1.清理画布和深度缓存
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit| ClearBufferMask.StencilBufferBit);
 
-            //.清空物体队列
             mOpacityObjects.Clear();
             mTransparentObjects.Clear();
-            projectObject(scene); //【分离透明物体】
+            projectObject(scene); 
 
-            // 对透明物体排序
-
-            //mTransparentObjects.Sort((a, b) =>
-            //{
-            //    var viewMatrix = camera.GetViewMatrix();
-
-            //    // 1. 计算 a 的相机系的 Z
-            //    var modelMatrixA = a.GetModelMatrix();
-            //    var worldPositionA = modelMatrixA * new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            //    var cameraPositionA = viewMatrix * worldPositionA;
-
-            //    // 2. 计算 b 的相机系的 Z
-            //    var modelMatrixB = b.GetModelMatrix();
-            //    var worldPositionB = modelMatrixB * new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            //    var cameraPositionB = viewMatrix * worldPositionB;
-
-            //    return cameraPositionA.Z.CompareTo(cameraPositionB.Z);
-            //});
-
-            //3 渲染两个队列
             for (int i = 0; i < mOpacityObjects.Count; i++)
             {
                 renderObject(mOpacityObjects[i], camera, light, projectionMatrix, specularIntensity, shiness);
@@ -338,15 +281,8 @@ namespace OpenTK_Winform_Robot
                 renderObject(mTransparentObjects[i], camera, light, projectionMatrix, specularIntensity, shiness);
             }
 
-            ////2. 将scene当作根节点开始递归渲染
-            //renderObject(scene,camera,light,projectionMatrix,specularIntensity,shiness);
         }
 
-        /// <summary>
-        /// 根据类型返回对应的Shader
-        /// </summary>
-        /// <param name="materialType"></param>
-        /// <returns></returns>
         private Shader pickShader(MaterialType materialType)
         {
             Shader result = null;
@@ -382,16 +318,13 @@ namespace OpenTK_Winform_Robot
             }
             return result;
         }
-        /// <summary>
-        /// 【分离透明物体和不透明物体】
-        /// </summary>
         private void projectObject(Object obj)
         {
             if (obj.getType()==ObjectType.Mesh || obj.getType() == ObjectType.InstancedMesh)
             {
                 Mesh mesh = (Mesh)obj;
                 Material material = mesh.mMaterial;
-                if (material.mBlend) mTransparentObjects.Add(mesh); // 如果是透明物体
+                if (material.mBlend) mTransparentObjects.Add(mesh);  
                 else mOpacityObjects.Add(mesh);
             }
 
@@ -401,24 +334,18 @@ namespace OpenTK_Winform_Robot
                 projectObject(children[i]);
             }
         }
-        /// <summary>
-        /// 【设置深度状态】
-        /// </summary>
         void setDepthState(Material material)
         {
             if (material.mDepthTest)
             {
-                GL.Enable(EnableCap.DepthTest); //打开【深度检测】
-                GL.DepthFunc(material.mDepthFunc); //设置【深度检测方法】
+                GL.Enable(EnableCap.DepthTest); 
+                GL.DepthFunc(material.mDepthFunc); 
             }
-            else GL.Disable(EnableCap.DepthTest); //关闭【深度检测】
+            else GL.Disable(EnableCap.DepthTest); 
 
-            if (material.mDepthWrite) GL.DepthMask(true); //打开【深度写入】
-            else GL.DepthMask(false); //关闭【深度写入】
+            if (material.mDepthWrite) GL.DepthMask(true); 
+            else GL.DepthMask(false); 
         }
-        /// <summary>
-        /// 【设置PolygonOffset状态】
-        /// </summary>
         void setPolygonOffsetState(Material material)
         {
             if (material.mPolygonOffset)
@@ -428,49 +355,42 @@ namespace OpenTK_Winform_Robot
             }
             else
             {
-                GL.Disable(EnableCap.PolygonOffsetFill);//关闭【PolygonOffset】
+                GL.Disable(EnableCap.PolygonOffsetFill);
                 GL.Disable(EnableCap.PolygonOffsetLine);
             }
         }
-        /// <summary>
-        /// 【设置深度测试状态】
-        /// </summary>
         void setStencilState(Material material)
         {
             if (material.mStencilTest)
             {
-                GL.Enable(EnableCap.StencilTest);//开启【模版测试】-选中状态
-                GL.StencilOp(material.mSFail, material.mZFail, material.mZPass); //设置【模版测试】状态
-                GL.StencilMask(material.mStencilMask);//开启【模版测试】写入-保证模版缓冲可以被清理
+                GL.Enable(EnableCap.StencilTest);
+                GL.StencilOp(material.mSFail, material.mZFail, material.mZPass); 
+                GL.StencilMask(material.mStencilMask);
                 GL.StencilFunc(material.mStencilFunc,material.mStencilRef,material.mStencilFuncMask);
             }
-            else GL.Disable(EnableCap.StencilTest); //关闭【模版测试】
+            else GL.Disable(EnableCap.StencilTest); 
         }
-        //【设置面剔除状态】
         void setFaceCullingState(Material material)
         {
             if (material.mFaceCulling)
             {
-                GL.Enable(EnableCap.CullFace);//开启【面剔除】
-                GL.FrontFace(material.mFrontFace); //【逆时针朝前】
-                GL.CullFace(material.mCullFace); //【剔除背面】
+                GL.Enable(EnableCap.CullFace);
+                GL.FrontFace(material.mFrontFace); 
+                GL.CullFace(material.mCullFace); 
             }
-            else GL.Disable(EnableCap.CullFace);//关闭【面剔除】
+            else GL.Disable(EnableCap.CullFace);
 
         }
-        /// <summary>
-        /// 【设置颜色混合状态】
-        /// </summary>
         void setBlendState(Material material)
         {
             if (material.mBlend)
             {
-                GL.Enable(EnableCap.Blend); //开启【颜色混合】
-                GL.BlendFunc(material.mSFactor, material.mDFactor);//【颜色混合方式】
+                GL.Enable(EnableCap.Blend); 
+                GL.BlendFunc(material.mSFactor, material.mDFactor);
             }
             else
             {
-                GL.Disable(EnableCap.Blend);//关闭【颜色混合】
+                GL.Disable(EnableCap.Blend);
             }
            
         }

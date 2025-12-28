@@ -13,32 +13,27 @@ namespace OpenTK_Winform_Robot
         out System.Numerics.Vector3 eulerAngle,
         out System.Numerics.Vector3 scale)
         {
-            // Decompose the matrix into position, rotation, and scale
             bool isDecompose = Matrix4x4.Decompose(matrix, out System.Numerics.Vector3 scaleVector, out System.Numerics.Quaternion rotationQuaternion, out System.Numerics.Vector3 translation);
 
             if (!isDecompose) 
             {
                 MessageBox.Show("解构失败");
             }
-            // Set the output parameters
             position = translation;
             scale = scaleVector;
 
-            // Convert quaternion to Euler angles
             Matrix4x4 rotationMatrix = Matrix4x4.CreateFromQuaternion(rotationQuaternion);
             eulerAngle = ExtractEulerAnglesXYZ(rotationMatrix);
 
-            // Convert the angles from radians to degrees
             eulerAngle = System.Numerics.Vector3.Multiply(eulerAngle, 180.0f / (float)Math.PI);
         }
 
 
         private static System.Numerics.Vector3 ExtractEulerAnglesXYZ(Matrix4x4 rotationMatrix)
         {
-            // Assuming the rotation matrix is in row-major order
             float sy = (float)Math.Sqrt(rotationMatrix.M11 * rotationMatrix.M11 + rotationMatrix.M21 * rotationMatrix.M21);
 
-            bool singular = sy < 1e-6f; // If sy is close to zero, consider it singular
+            bool singular = sy < 1e-6f;          
 
             float x, y, z;
             if (!singular)
@@ -73,9 +68,9 @@ namespace OpenTK_Winform_Robot
             position.Z = -matrix.M24;
 
             Matrix3 subMatrix = new Matrix3(
-                                matrix.M11, matrix.M12, matrix.M13,  // 第1行，第1-3列
-                                matrix.M21, matrix.M22, matrix.M23,  // 第2行，第1-3列
-                                matrix.M31, matrix.M32, matrix.M33   // 第3行，第1-3列
+                                matrix.M11, matrix.M12, matrix.M13,   
+                                matrix.M21, matrix.M22, matrix.M23,   
+                                matrix.M31, matrix.M32, matrix.M33    
                                 );
 
            

@@ -27,100 +27,93 @@ namespace OpenTK_Winform_Robot
             form1 = this;
 
         }
-        //private int indexBufferHandle; //EBO缓存索引
-        //private int vertexArrayHandel; //VAO索引
-        Matrix4 viewMatrix = Matrix4.Identity; //摄像机投影矩阵（由世界坐标系→摄像机坐标系）
-        Matrix4 transform = Matrix4.Identity;
-        Matrix4 orthoMatrix = Matrix4.Identity; //【正交投影】变换矩阵
-        Matrix4 perspectiveMatrix = Matrix4.Identity; //【透视投影】变换矩阵
-        Matrix4 projectionMatrix = Matrix4.Identity; //【投影】变换矩阵
-        //int indicesCount;  //索引个数
 
-        Point glMousePt;  // 鼠标位置
+        Matrix4 viewMatrix = Matrix4.Identity; 
+        Matrix4 transform = Matrix4.Identity;
+        Matrix4 orthoMatrix = Matrix4.Identity; 
+        Matrix4 perspectiveMatrix = Matrix4.Identity; 
+        Matrix4 projectionMatrix = Matrix4.Identity; 
+
+
+        Point glMousePt;
         bool mLeftMouseDown = false;
         bool mRightMouseDown = false;
         bool mMiddleMouseDown = false;
 
         float mCurrentX = 0.0f;
         float mCurrentY = 0.0f;
-        private float _mouseSensitivity = 0.2f; //旋转敏感度 
-        private float _moveSensitivity = 0.005f; //平移敏感度 
-        private float _scaleSensitivity; //缩放敏感度 
-        private float _gameSensitivity = 0.1f; //移动敏感度 
-        private int projectionIndex = 1;  //投影类型：1-透视投影 2-正交投影
-        private int cameraIndex = 1;  //相机类型：1-轨迹球相机 2-游戏相机
+        private float _mouseSensitivity = 0.2f; 
+        private float _moveSensitivity = 0.005f; 
+        private float _scaleSensitivity;
+        private float _gameSensitivity = 0.1f; 
+        private int projectionIndex = 1;  
+        private int cameraIndex = 1;  
         private float deltaScale = 1;
         Camera camera = new Camera();
         Geometry geometry = new Geometry();
-        //Vector3 lightDirection = new Vector3(-1.0f, -1.0f, -1.0f);  //光照方向;
-        //Vector3 lightColor = new Vector3(1.0f, 1.0f, 1.0f);  //光照颜色;
+
         float specularIntensity;
         float shiness;
-        Vector3 ambientColor = new Vector3(0.2f, 0.2f, 0.2f);  //环境光强度;
+        Vector3 ambientColor = new Vector3(0.2f, 0.2f, 0.2f);  
 
         Renderer renderer = null;
-        //List<Mesh> meshes= null;
-
         Light light = null;
 
-        Object zouTai; //走台
+        Object zouTai; 
 
-        Object robotModel; //导入的模型
-        Object mojiModel; //导入的模型
-        Object MJ01; //导入的磨机模型
-        Object MJ02; //导入的模型
-        Object MJ03; //导入的模型
-        Object MJ04; //导入的模型
-        Object CB01; //导入的模型-衬板
-        Object Car01; //导入的模型-整体运输小车
-        Object Car02; //导入的模型-运输小车托板
-        Object eeAxis; //导入的模型-末端执行器坐标系
+        Object robotModel; 
+        Object mojiModel; 
+        Object MJ01; 
+        Object MJ02; 
+        Object MJ03;
+        Object MJ04; 
+        Object CB01;
+        Object Car01; 
+        Object Car02;
+        Object eeAxis; 
 
-        List<Joint> listJoints; //骨骼列表
-        Object joint = new Object(); //机器人关节
+        List<Joint> listJoints; 
+        Object joint = new Object(); 
         Vector4 endEffectorPos;
-        Vector4 endEffectorPos10; //末端关节位置数据
+        Vector4 endEffectorPos10; 
 
-        Object find_joint1 = new Object(); //大臂移动关节-外
-        Object find_joint2 = new Object(); //大臂移动关节-内
-        Object find_joint3 = new Object(); //小臂回旋
-        Object find_joint4 = new Object(); //小臂俯仰
-        Object find_joint5 = new Object(); //小臂移动-中
-        Object find_joint6 = new Object(); //小臂移动-端
-        Object find_joint7 = new Object(); //腕部平摆
-        Object find_joint8 = new Object(); //腕部俯仰
-        Object find_joint9 = new Object(); //腕部滚摆
+        Object find_joint1 = new Object(); 
+        Object find_joint2 = new Object(); 
+        Object find_joint3 = new Object(); 
+        Object find_joint4 = new Object(); 
+        Object find_joint5 = new Object(); 
+        Object find_joint6 = new Object(); 
+        Object find_joint7 = new Object(); 
+        Object find_joint8 = new Object(); 
+        Object find_joint9 = new Object(); 
 
-        Object find_EE = new Object(); //末端执行器
+        Object find_EE = new Object(); 
 
-        private Drawline[] drawLine = new Drawline[2]; // 绘制轨迹曲线
+        private Drawline[] drawLine = new Drawline[2]; 
         Vector3 point_PP;
         public int indexLine;
                                        
         private void Form1_Load(object sender, EventArgs e)
         {
-            drawLine[0] = new Drawline(); //实例化轨迹绘制
-            drawLine[1] = new Drawline(); //实例化轨迹绘制
+            drawLine[0] = new Drawline(); 
+            drawLine[1] = new Drawline();
             drawLine[0].lineColor = new Vector3(1.0f, 0.0f, 0.0f);
             drawLine[1].lineColor = new Vector3(0.0f, 0.0f, 1.0f);
 
             this.StartPosition = FormStartPosition.CenterScreen;
-            CheckForIllegalCrossThreadCalls = false; //取消跨线程屏蔽
+            CheckForIllegalCrossThreadCalls = false; 
 
-            //平行光：参数（方向，光强） uniform变量形式
-            specularIntensity = trackBar1.Value / 10.0f; ;   //高光强度
+            specularIntensity = trackBar1.Value / 10.0f; ;   
             shiness = 32.0f;
             _scaleSensitivity = trackBar4.Value / 10.0f;
             _moveSensitivity = trackBar5.Value / 1000.0f;
 
-            init_Pos();     //初始化大臂和小臂的位置
-            init_MDH();     //初始化MD-H
-            init_Offset(); //初始化关节偏置
-            InitChart();   // 初始化表格
-            //this.WindowState = FormWindowState.Maximized;   // 最大化窗口
+            init_Pos();     
+            init_MDH();     
+            init_Offset(); 
+            InitChart();    
         }
 
-        //初始化关节偏置
         private void init_Offset()  
         {
             global.offset = new double[7];
@@ -134,7 +127,6 @@ namespace OpenTK_Winform_Robot
             global.offset[6] = Convert.ToDouble(Txt_q7_offset.Text.ToString());
 
         }
-        //初始化MD-H
         private void init_MDH()  
         {
             global.alpha = new double[8];
@@ -175,20 +167,15 @@ namespace OpenTK_Winform_Robot
         {
             chart1.Series.Clear();
             chart1.ChartAreas.Clear();
-            //chart1.Legends.Clear();
-
             ChartArea area = new ChartArea("MainArea");
             chart1.ChartAreas.Add(area);
 
-            // 关闭主轴和副轴的网格线
             area.AxisX.MajorGrid.Enabled = false;
             area.AxisY.MajorGrid.Enabled = false;
             area.AxisY2.MajorGrid.Enabled = false;
 
-            // 设置X轴刻度间隔为5
             area.AxisX.Interval = 5;
 
-            // 启用右侧的Y轴
             area.AxisY2.Enabled = AxisEnabled.True;
             area.AxisY2.Title = "Prismatic (mm)";
             area.AxisY.Title = "Rotation (°)";
@@ -196,25 +183,17 @@ namespace OpenTK_Winform_Robot
             area.AxisY2.TitleFont = new Font("Times New Roman", 14F);
             area.AxisY.TitleFont = new Font("Times New Roman", 14F);
 
-            //// 添加图例
-            //Legend legend = new Legend("MainLegend");
-            //legend.Docking = Docking.Top;               // 设置在顶部
-            //legend.Alignment = StringAlignment.Center;  // 居中对齐
-            //legend.LegendStyle = LegendStyle.Row;       // 横向排列
-            //chart1.Legends.Add(legend);
 
-            // 添加多个曲线（Series）
             for (int i = 0; i < 7; i++)
             {
                 Series series = new Series("Joint q" + (i + 1));
                 series.ChartType = SeriesChartType.Line;
                 series.BorderWidth = 2;
 
-                // 设定 Y 轴类型：前两个使用右侧（Y2），其余默认使用左侧（Y）
                 if (i + 1 == 1 || i + 1 == 4)
-                    series.YAxisType = AxisType.Secondary; // 使用右边Y轴
+                    series.YAxisType = AxisType.Secondary;  
                 else
-                    series.YAxisType = AxisType.Primary;   // 使用左边Y轴
+                    series.YAxisType = AxisType.Primary;    
    
 
                 switch (i + 1)
@@ -251,11 +230,6 @@ namespace OpenTK_Winform_Robot
                 chart1.Series.Add(series);
             }
 
-            // 设置坐标轴自动缩放
-            //chart1.ChartAreas[0].AxisX.Minimum = Double.NaN;
-            //chart1.ChartAreas[0].AxisX.Maximum = Double.NaN;
-
-            // 设置坐标轴最大值和最小值
             chart1.ChartAreas[0].AxisX.Minimum = 0;
             chart1.ChartAreas[0].AxisX.Maximum = 100;
 
@@ -266,9 +240,6 @@ namespace OpenTK_Winform_Robot
             chart1.ChartAreas[0].AxisY2.Maximum = 10000;
         }
 
-        /// <summary>
-        /// 自动添加点
-        /// </summary>
         private void AddPointToSeries(int seriesIndex, double xValue, double yValue)
         {
             if (seriesIndex < 0 || seriesIndex >= chart1.Series.Count)
@@ -276,30 +247,21 @@ namespace OpenTK_Winform_Robot
 
             Series series = chart1.Series[seriesIndex];
 
-            // 添加新点
             series.Points.AddXY(xValue, yValue);
 
-            // 如果点数超过100，删除最前面的点（即老的点）
             if (series.Points.Count > 100)
             {
                 series.Points.RemoveAt(0);
             }
 
-            // 可选：自动调整 X 轴显示范围
             chart1.ChartAreas[0].RecalculateAxesScale();
         }
 
-        /// <summary>
-        /// 摄像机【放大缩小】
-        /// </summary>
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)
         {
             deltaScale = e.Delta / Math.Abs(e.Delta);
-            if (projectionIndex == 1) //【透视投影相机】
+            if (projectionIndex == 1) 
             {
-                // e.Delta > 0 表示向上滚动
-
-                //Debug.WriteLine(deltaScale.ToString());
                 Vector3 currentFront = Vector3.Cross(camera._up, camera._right);
                 camera._position += (currentFront * deltaScale * _scaleSensitivity);
             }
@@ -313,37 +275,30 @@ namespace OpenTK_Winform_Robot
                 projectionMatrix = camera.GetOrthoMatrix();
 
             }
-            glControl1_Paint(null, null); //重新绘制
+            glControl1_Paint(null, null); 
         }
 
         private void glControl1_Load(object sender, EventArgs e)
         {
 
-            this.glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel); //滚轮事件
+            this.glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel); 
             
-            //抗锯齿
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             GL.Enable(EnableCap.Multisample);
 
 
-            //GL.Enable(EnableCap.PolygonOffsetFill); //开启面【深度偏移功能】
-            //GL.PolygonOffset(1.0f,1.0f); //【消除ZFighting】
+            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
 
-            //GL.ClearColor(new Color4(128 / 255f, 255 / 255f, 128 / 255f, 1.0f)); //设置清理颜色
-            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f); //设置【白色背景】
-
-            timer1.Interval = 1000 / 60;  //【60HZ】
+            timer1.Interval = 1000 / 60;  
             timer1.Enabled = true;
 
            
-            prepareCamera(); //准备并初始化【相机】矩阵
+            prepareCamera(); 
 
-            if (projectionIndex == 1) preparePerspective(); //【透视投影】相机
-            else prepareOrtho(); //【正交投影】相机
+            if (projectionIndex == 1) preparePerspective(); 
+            else prepareOrtho(); 
 
-            //prepareShader(); //4.【Shader操作】
-
-            prepare();  //【各种准备】
+            prepare();  
 
             find_joint1 = findJoint(global.scene, "坐标1_大臂移动");
             find_joint2 = findJoint(global.scene, "坐标1_大臂移动V2");
@@ -361,7 +316,6 @@ namespace OpenTK_Winform_Robot
             global.targetPoint = findJoint(global.scene, "目标点");
 
             
-            // ------分离模型-----
             CB01 = findJoint(robotModel, "衬板");
             Car01=findJoint(robotModel, "运输小车");
             Car02= findJoint(robotModel, "回转台");
@@ -369,38 +323,23 @@ namespace OpenTK_Winform_Robot
 
         }
 
-        /// <summary>
-        /// 【准备相机】
-        /// </summary>
         private void prepareCamera()
         {
             viewMatrix = camera.GetViewMatrix();
-            //viewMatrix =Matrix4.LookAt(new Vector3(5.0f, 0.0f, 5.0f), new Vector3(0.0f, 0.0f, 0.0f), _up);
         }
 
-        /// <summary>
-        /// 【正交投影矩阵】
-        /// </summary>
         private void prepareOrtho()
         {
-            //orthoMatrix = Matrix4.CreateOrthographicOffCenter(-2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -2.0f);// 创建正交投影矩阵
             projectionMatrix = camera.GetOrthoMatrix();
 
         }
 
 
-        /// <summary>
-        /// 【透视投影矩阵】
-        /// </summary>
         private void preparePerspective()
         {
-            float fov = MathHelper.DegreesToRadians(60.0f); //【视张角】
-            float aspectRatio = (float)glControl1.Width / (float)glControl1.Height; //【宽高比】
-            //float near = 0.01f; //【近平面】-距离相机的距离
-            //float far = 10000.0f; //【远平面】-距离相机的距离
-            // 创建【透视投影矩阵】
+            float fov = MathHelper.DegreesToRadians(60.0f); 
+            float aspectRatio = (float)glControl1.Width / (float)glControl1.Height; 
             projectionMatrix = camera.GetPerspectiveMatrix(fov, aspectRatio, camera.pNear, camera.pFar);
-            //perspectiveMatrix = Matrix4.CreatePerspectiveFieldOfView(fov, aspectRatio, near, far);
         }
 
 
@@ -418,11 +357,10 @@ namespace OpenTK_Winform_Robot
 
         private void glControl1_MouseDown(object sender, MouseEventArgs e)
         {
-            Point pt = MousePosition; //获取鼠标位置
+            Point pt = MousePosition; 
             glMousePt = this.glControl1.PointToClient(pt);
             mCurrentX = glMousePt.X;
             mCurrentY = glMousePt.Y;
-            // 判断按下的鼠标按钮
             if (e.Button == MouseButtons.Left)
             {
                 mLeftMouseDown = true;
@@ -452,23 +390,19 @@ namespace OpenTK_Winform_Robot
 
         private void glControl1_MouseMove(object sender, MouseEventArgs e)
         {
-            Point pt = MousePosition; //获取鼠标位置
+            Point pt = MousePosition; 
             glMousePt = this.glControl1.PointToClient(pt);
 
-            //【左键】-旋转操作
             if (mLeftMouseDown)
             {
                 float deltaX = (glMousePt.X - mCurrentX) * _mouseSensitivity;
                 float deltaY = (glMousePt.Y - mCurrentY) * _mouseSensitivity;
-                //Debug.WriteLine($"Mouse Position: X = {deltaX}, Y = {deltaY}");
-
-                //1.计算pitch-更新up和position
                 updatePitch(deltaY);
                 updateYaw(deltaX);
 
 
             }
-            else if (mMiddleMouseDown) //【中间】-移动操作
+            else if (mMiddleMouseDown) 
             {
                 float deltaX = (glMousePt.X - mCurrentX) * _moveSensitivity;
                 float deltaY = (glMousePt.Y - mCurrentY) * _moveSensitivity;
@@ -482,22 +416,19 @@ namespace OpenTK_Winform_Robot
             glControl1_Paint(null, null);
 
         }
-        private float mPitch = 0.0f; //累计角度
+        private float mPitch = 0.0f; 
         private void updatePitch(float angle)
         {
             Matrix4 mat = Matrix4.Identity;
-            if (cameraIndex == 1) //【轨迹球相机】
+            if (cameraIndex == 1) 
             {
-                //绕mRight旋转:影响up和position向量
-
-                mat = mat * Matrix4.CreateFromAxisAngle(camera._right, MathHelper.DegreesToRadians(angle)); // 创建旋转矩阵并应用
+                mat = mat * Matrix4.CreateFromAxisAngle(camera._right, MathHelper.DegreesToRadians(angle));  
                 Vector4 transformedUp = mat * (new Vector4(camera._up, 0.0f));
                 camera._up = new Vector3(transformedUp.X, transformedUp.Y, transformedUp.Z);
-                //更新position向量
                 Vector4 transformedPos = mat * (new Vector4(camera._position, 1.0f));
                 camera._position = new Vector3(transformedPos.X, transformedPos.Y, transformedPos.Z);
             }
-            else //【游戏相机】
+            else 
             {
                 mPitch += angle;
                 if (mPitch > 89.0f || mPitch < -89.0f)
@@ -505,9 +436,7 @@ namespace OpenTK_Winform_Robot
                     mPitch -= angle;
                     return;
                 }
-                //绕mRight旋转:影响up
-                mat = mat * Matrix4.CreateFromAxisAngle(camera._right, MathHelper.DegreesToRadians(angle)); // 创建旋转矩阵并应用
-                                                                                                            //更新up向量
+                mat = mat * Matrix4.CreateFromAxisAngle(camera._right, MathHelper.DegreesToRadians(angle));  
                 Vector4 transformedUp = mat * (new Vector4(camera._up, 0.0f));
                 camera._up = new Vector3(transformedUp.X, transformedUp.Y, transformedUp.Z);
             }
@@ -518,28 +447,21 @@ namespace OpenTK_Winform_Robot
         private void updateYaw(float angle)
         {
             Matrix4 mat = Matrix4.Identity;
-            if (cameraIndex == 1) //【轨迹球相机】
+            if (cameraIndex == 1) 
             {
-                //绕mRight旋转:影响up和position向量
-
-                mat = mat * Matrix4.CreateFromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(angle)); // 创建旋转矩阵并应用
-                                                                                                            //更新up向量
+                mat = mat * Matrix4.CreateFromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(angle));  
                 Vector4 transformedUp = mat * (new Vector4(camera._up, 0.0f));
                 camera._up = new Vector3(transformedUp.X, transformedUp.Y, transformedUp.Z);
-                //更新position向量
                 Vector4 transformedPos = mat * (new Vector4(camera._position, 1.0f));
                 camera._position = new Vector3(transformedPos.X, transformedPos.Y, transformedPos.Z);
-                //更新right向量
                 Vector4 transformedRight = mat * (new Vector4(camera._right, 1.0f));
                 camera._right = new Vector3(transformedRight.X, transformedRight.Y, transformedRight.Z);
             }
             else
             {
-                mat = mat * Matrix4.CreateFromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(angle)); // 创建旋转矩阵并应用
-                                                                                                            //更新up向量
+                mat = mat * Matrix4.CreateFromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(angle));  
                 Vector4 transformedUp = mat * (new Vector4(camera._up, 0.0f));
                 camera._up = new Vector3(transformedUp.X, transformedUp.Y, transformedUp.Z);
-                //更新right向量
                 Vector4 transformedRight = mat * (new Vector4(camera._right, 1.0f));
                 camera._right = new Vector3(transformedRight.X, transformedRight.Y, transformedRight.Z);
             }
@@ -550,10 +472,9 @@ namespace OpenTK_Winform_Robot
         {
 
             if (cameraIndex != 2) return;
-            Vector3 direction = Vector3.Zero; //移动方向
-            Vector3 front = Vector3.Cross(camera._up, camera._right); //前向方向
+            Vector3 direction = Vector3.Zero; 
+            Vector3 front = Vector3.Cross(camera._up, camera._right); 
             Vector3 right = camera._right;
-            // 判断按下的键
             if (e.KeyCode == Keys.W)
             {
                 direction += front;
@@ -594,18 +515,18 @@ namespace OpenTK_Winform_Robot
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            camera._position = new Vector3(0.0f, 0.0f, 2.0f); //【摄像机位置】-初始位置
-            camera._up = Vector3.UnitY;  //【摄像机顶部】
-            camera._right = Vector3.UnitX; //【摄像机右侧】
+            camera._position = new Vector3(0.0f, 0.0f, 2.0f); 
+            camera._up = Vector3.UnitY;  
+            camera._right = Vector3.UnitX; 
 
-            orthoMatrix = Matrix4.CreateOrthographicOffCenter(-2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -2.0f);// 创建正交投影矩阵
+            orthoMatrix = Matrix4.CreateOrthographicOffCenter(-2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -2.0f); 
 
-            float fov = MathHelper.DegreesToRadians(60.0f); //【视张角】
-            float aspectRatio = (float)glControl1.Width / (float)glControl1.Height; //【宽高比】
-            float near = 0.01f; //【近平面】-距离相机的距离
-            float far = 100.0f; //【远平面】-距离相机的距离
+            float fov = MathHelper.DegreesToRadians(60.0f); 
+            float aspectRatio = (float)glControl1.Width / (float)glControl1.Height; 
+            float near = 0.01f; 
+            float far = 100.0f; 
 
-            perspectiveMatrix = Matrix4.CreatePerspectiveFieldOfView(fov, aspectRatio, near, far); // 创建【透视投影矩阵】
+            perspectiveMatrix = Matrix4.CreatePerspectiveFieldOfView(fov, aspectRatio, near, far);  
 
             if (projectionIndex == 1) projectionMatrix = perspectiveMatrix;
             else projectionMatrix = orthoMatrix;
@@ -613,12 +534,8 @@ namespace OpenTK_Winform_Robot
 
         }
 
-        /// <summary>
-        /// 【白色背景】
-        /// </summary>
         private void btnColor_Click(object sender, EventArgs e)
         {
-            //GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f); //设置背景颜色
             GL.ClearColor(
                 btnColor_White.BackColor.R / 255f,
                 btnColor_White.BackColor.G / 255f,
@@ -627,12 +544,8 @@ namespace OpenTK_Winform_Robot
             glControl1_Paint(null, null);
         }
 
-        /// <summary>
-        /// 【绿色背景】
-        /// </summary>
         private void btnColor_Green_Click(object sender, EventArgs e)
         {
-            //GL.ClearColor(0.5f, 1.0f, 0.5f, 1.0f); //设置背景颜色
             GL.ClearColor(
                 btnColor_Green.BackColor.R / 255f,
                 btnColor_Green.BackColor.G / 255f,
@@ -643,13 +556,10 @@ namespace OpenTK_Winform_Robot
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            specularIntensity = trackBar1.Value / 10.0f;   //高光强度
+            specularIntensity = trackBar1.Value / 10.0f;   
             glControl1_Paint(null, null);
         }
 
-        /// <summary>
-        /// 生成TreeView
-        /// </summary>
         void getTree(Object obj, TreeNode tnParent)
         {
             var children = obj.getChild();
@@ -657,16 +567,14 @@ namespace OpenTK_Winform_Robot
             {
                 if (children[i].GetName() != null)
                 {
-                    //MessageBox.Show(children[i].GetName());
                     TreeNode tn = new TreeNode(children[i].GetName());
-                    tnParent.Nodes.Add(tn);//将部件子节点添加都对应的父节点中     
+                    tnParent.Nodes.Add(tn);     
                     getTree(obj.mChildren[i], tn);
                 }
 
             }
         }
 
-        //【根据名字设置位置】
         void setPosition(Object obj, String name)
         {
             var children = obj.getChild();
@@ -684,7 +592,6 @@ namespace OpenTK_Winform_Robot
 
         }
 
-        //【根据名字设置角度】
         void setRotateY(Object obj, String name)
         {
             var children = obj.getChild();
@@ -702,7 +609,6 @@ namespace OpenTK_Winform_Robot
 
         }
 
-        //【根据名字寻找关节】
         private Object findJoint(Object obj, String name)
         {
             var children = obj.getChild();
@@ -739,7 +645,7 @@ namespace OpenTK_Winform_Robot
         }
         private void trackBar2_Scroll(object sender, EventArgs e)
         {
-            shiness = trackBar2.Value; ;   //高光强度
+            shiness = trackBar2.Value; ;   
             glControl1_Paint(null, null);
         }
         private void timer1_Tick(object sender, EventArgs e)
@@ -748,33 +654,30 @@ namespace OpenTK_Winform_Robot
         }
         private void trackBar3_Scroll(object sender, EventArgs e)
         {
-            _mouseSensitivity = trackBar3.Value / 10.0f;   //【旋转】灵敏度
+            _mouseSensitivity = trackBar3.Value / 10.0f;   
             glControl1_Paint(null, null);
         }
 
         private void trackBar4_Scroll(object sender, EventArgs e)
         {
-            _scaleSensitivity = trackBar4.Value / 10.0f;   //【缩放】灵敏度
+            _scaleSensitivity = trackBar4.Value / 10.0f;   
             glControl1_Paint(null, null);
         }
 
         private void trackBar5_Scroll(object sender, EventArgs e)
         {
-            _moveSensitivity = trackBar5.Value / 1000.0f;   //【移动】灵敏度
+            _moveSensitivity = trackBar5.Value / 1000.0f;   
             glControl1_Paint(null, null);
         }
         int PP_Stop=1;
         private void glControl1_Paint(object sender, PaintEventArgs e)
         {
 
-            //findJoint(scene, "显示坐标轴").SetPosition(new Vector3(5.0f, 0.0f, glControl1.Width / 1000.0f));
-
             renderer.Render(global.scene, camera, light, projectionMatrix, specularIntensity, shiness);
 
             if (PP_Stop==0)
             {
-                // 绘制轨迹
-                endObject_xyz = showEndPosition(); // 末端执行器xyz坐标
+                endObject_xyz = showEndPosition();  
                 point_PP = new Vector3(
                     (float)Math.Round((float)endObject_xyz[9], 4),
                     -(float)Math.Round((float)endObject_xyz[11], 4),
@@ -784,10 +687,10 @@ namespace OpenTK_Winform_Robot
                 drawLine[indexLine].AddPoint(new Vector3((float)endObject_xyz[9], -(float)endObject_xyz[11], (float)endObject_xyz[10]));
             }
 
-            if (chk_traj.Checked) drawLine[0].Draw();  // 绘制轨迹线
-            if (chk_traj.Checked) drawLine[1].Draw();  // 绘制轨迹线
+            if (chk_traj.Checked) drawLine[0].Draw();   
+            if (chk_traj.Checked) drawLine[1].Draw();   
 
-            glControl1.SwapBuffers(); //双缓存
+            glControl1.SwapBuffers(); 
 
         }
         string exeDir;
@@ -797,129 +700,30 @@ namespace OpenTK_Winform_Robot
              exeDir = Application.StartupPath;
              projectRoot = Directory.GetParent(exeDir).Parent.FullName;
 
-            renderer = new Renderer();  //渲染器
-            global.scene = new Scene();        //场景
+            renderer = new Renderer();  
+            global.scene = new Scene();        
 
-            //模型读取-【机械手臂】
+            robotModel = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/Manipulator_20250326.fbx");  
            
-            robotModel = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/Manipulator_20250326.fbx"); // 带衬板带小车
-           
-
-            //setModelBlend(robotModel, true, 0.8f); //设置模型的【透明度】
 
             robotModel.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            //robotModel.SetScale(new Vector3(1.0f, 1.0f, 1.0f));
-
-            //【Light】
             light = new Light();
             light.setDirectionalLight(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(-1.0f, -1.0f, 1.0f));
-            //light.setDirectionalLight(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, -1.0f, 1.0f));
 
-
-
-            //【设置旋转角度】
-            //setRotateY(robotModel, "abc"); //【设置指定Object的位置】
 
             global.scene.addChild(robotModel);
 
-            ////setPosition(robotModel,"球体"); //【设置指定Object的位置】
-            //setRotateY(robotModel, "坐标2_小臂回旋"); //【设置指定Object的位置】
-
-            ////【几何-1】
-            //Geometry geometry_1 = new Geometry();
-            //geometry_1 = geometry_1.createBox(2.0f);
-
-            ////【几何-1】
-            //Geometry geometry_2 = new Geometry();
-            //geometry_2 = geometry_2.createBox(2.0f);
-
-            ////【Material-1】
-            //Material material_1 = new Material();
-            ////material_1.mShiness = 64.0f; //高光强度
-
-            //material_1.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/box.png", 0);
-            //material_1.mSpecularMask = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/sp_mask.png", 1);
-            //material_1.mType = MaterialType.PhongMaterial;
-            ////【Material-2】
-            //Material material_2 = new Material();
-            ////material_2.mShiness = 64.0f; //高光强度
-
-            //material_2.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/earth.png", 0);
-            //material_2.mType = MaterialType.PhongMaterial;  //Shader类型
-            //material_2.mSpecularMask = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/sp_mask.png", 1);
-
-            ////【Mesh-1】
-            //Mesh mesh_1 = new Mesh(geometry_1, material_1);
 
 
-            ////【Mesh-2】
-            //mesh_2 = new Mesh(geometry_2, material_2);
-            //mesh_2.SetPosition(new Vector3(5.0f, 0.0f, 0.0f));
-            //mesh_2.setAngleZ(10.0f);
-
-
-            ////【创建父子关系】
-            //mesh_1.addChild(mesh_2);
-            //scene.addChild(mesh_1);
-
-            //【创建骨骼】--------------------
             Mesh bones = prepareBones();
             global.scene.addChild(bones);
 
-            ////【创建目标】--------------------
-            //Mesh target = prepareTarget();
-            //scene.addChild(target);
-
-            //【创建点光源】--------------------
-            //Mesh pointLight = preparePointLight();
-            //global.scene.addChild(pointLight);
-
-            //setModelBlend(pointLight, true, 0.8f); //设置模型的【透明度】
-
-            ////【创建地面】-------------------
-            //Mesh groundMesh = prepareGround();
-            //scene.addChild(groundMesh);
-
-            //【创建多实例】--------------------
-            //Mesh instanceMesh = prepareInstance();
-            //global.scene.addChild(instanceMesh);
-
-            //【创建天空盒】-------------------
-            //Mesh cubeMesh = prepareSkyBox();
-            //scene.addChild(cubeMesh);
-
-            //【骨骼映射】
             projectBones();
 
-            //模型读取-【衬板】
-
-            //CB01 = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/Chenban.fbx");
-            //CB01.SetName("衬板_01");
-            //CB01.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            //CB01.SetPosition(new Vector3(0.0f, 0.0f, 5.0f));
-            //global.scene.addChild(CB01);
-            //find_EE = findJoint(global.scene, "坐标7_腕部滚摆");
-            //find_EE.addChild(CB01);
-
-
-            //模型读取-【走台】
-            //zouTai = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/ZouTai_20250912.fbx");
-            //zouTai.SetName("走台");
-            //zouTai.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            //global.scene.addChild(zouTai);
-
-            //模型读取-【球磨机】
-            //mojiModel = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/QiuMoJi.fbx");
-            ////setModelBlend(mojiModel, true, 0.8f); //设置模型的【透明度】
-            //mojiModel.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            //scene.addChild(mojiModel);
-
-            //模型读取-【球磨机-MJ01】
 
             MJ01 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ01.fbx");
             MJ01.SetName("磨机_01");
             MJ01.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            //setModelBlend(MJ01, true, 0.5f);                // 设置透明度
             global.scene.addChild(MJ01);
 
             MJ02 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ02.fbx");
@@ -938,49 +742,9 @@ namespace OpenTK_Winform_Robot
             MJ04.SetName("磨机_04");
             MJ04.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
             global.scene.addChild(MJ04);
-            //setModelBlend(MJ04, true, 0.5f);                // 设置透明度
 
 
 
-            //模型读取-【球磨机-高亮】
-            //Material materialBound = new Material();
-            //materialBound.mType = MaterialType.WhiteMaterial;
-
-            //mojiModel.SetScale(new Vector3(0.015f, 0.015f, 0.015f));
-
-            //scene.addChild(mojiModel);
-
-
-            //----【运输小车】-----【用分离法】
-            //Car01 = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/transportCar.fbx");
-            //Car01.SetName("运输小车_01");
-            //Car01.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
-            //Car01.setAngleX(90.0f);
-            //Car01.SetPosition(new Vector3(0.0f, -550.0f, 0.0f));
-
-            //global.scene.addChild(Car01)
-
-
-            //----【坐标轴】-----
-            ////【几何-1】
-            //Geometry axis_Geometry = new Geometry();
-            //axis_Geometry = axis_Geometry.createBox(1.0f);
-
-            ////【Material-1】
-            //Material axis_Mat = new Material();
-
-            //axis_Mat.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/box.png", 0);
-            //axis_Mat.mSpecularMask = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/sp_mask.png", 1);
-            //axis_Mat.mType = MaterialType.AxisMaterial;
-
-            ////【Mesh-1】
-            //Mesh axis_Mesh = new Mesh(axis_Geometry, axis_Mat);
-            //axis_Mesh.SetName("显示坐标轴");
-
-            ////axis_Mesh.SetPosition(new Vector3(5.0f, 0.0f, glControl1.Width / 1000.0f));
-            //Debug.WriteLine(glControl1.Width);
-
-            //scene.addChild(axis_Mesh);
 
         }
 
@@ -1002,16 +766,15 @@ namespace OpenTK_Winform_Robot
             Joint joint10 = new Joint(global.scene.mChildren[1].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0]);
             Joint joint11 = new Joint(global.scene.mChildren[1].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0].mChildren[0]);
 
-            //【设置限制条件】 //nx,ny,nz,mx,my,mz,ntrans,mtrans
-            joint0.constraints(0, 0, 0, 0, 0, 0, 0, 5.6f);  //【大臂外段】
-            joint1.constraints(0, 0, 0, 0, 0, 0, 0, 5.9f);  //【大臂内段】
-            joint2.constraints(0, 0, -180.0f, 180.0f, 0, 0, 0, 0.0f);  //【小臂回旋】
-            joint4.constraints(-40.0f, 35.0f, 0, 0, 0, 0, 0, 0);  //【小臂俯仰】
-            joint6.constraints(0, 0, 0, 0, 0, 0, 0, 1.5f);  //【小臂中段】
-            joint7.constraints(0, 0, 0, 0, 0, 0, 0, 1.5f);  //【小臂前段】
-            joint8.constraints(0, 0, -75.0f, 75.0f, 0, 0, 0, 0);  //【腕部平摆】
-            joint9.constraints(-105.0f, 30.0f, 0, 0, 0, 0, 0, 0);  //【腕部俯仰】
-            joint10.constraints(0, 0, 0, 0, -180.0f, 180.0f, 0, 0);  //【腕部滚摆】
+            joint0.constraints(0, 0, 0, 0, 0, 0, 0, 5.6f);  
+            joint1.constraints(0, 0, 0, 0, 0, 0, 0, 5.9f);  
+            joint2.constraints(0, 0, -180.0f, 180.0f, 0, 0, 0, 0.0f);  
+            joint4.constraints(-40.0f, 35.0f, 0, 0, 0, 0, 0, 0);  
+            joint6.constraints(0, 0, 0, 0, 0, 0, 0, 1.5f);  
+            joint7.constraints(0, 0, 0, 0, 0, 0, 0, 1.5f);  
+            joint8.constraints(0, 0, -75.0f, 75.0f, 0, 0, 0, 0);  
+            joint9.constraints(-105.0f, 30.0f, 0, 0, 0, 0, 0, 0);  
+            joint10.constraints(0, 0, 0, 0, -180.0f, 180.0f, 0, 0);  
 
 
             listJoints.Add(joint0);
@@ -1027,16 +790,11 @@ namespace OpenTK_Winform_Robot
             listJoints.Add(joint10);
             listJoints.Add(joint11);
         }
-        /// <summary>
-        /// 【创建多实例】
-        /// </summary>
         private Mesh prepareInstance()
         {
-            //【几何-目标】
             Geometry geometry = new Geometry();
             geometry = geometry.createSphere(0.1f);
 
-            //【Material】
             Material material = new Material();
 
             material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/earth.png", 0);
@@ -1052,15 +810,12 @@ namespace OpenTK_Winform_Robot
         }
         private Mesh preparePointLight()
         {
-            //【几何-目标】
             Geometry geometry = new Geometry();
             geometry = geometry.createSphere(0.1f);
 
-            //【Material】
             Material material = new Material();
             material.mType = MaterialType.WhiteMaterial;
 
-            //【Mesh】
             Mesh mesh = new Mesh(geometry, material);
             mesh.SetName("目标点");
             mesh.SetPosition(global.t_position);
@@ -1070,17 +825,14 @@ namespace OpenTK_Winform_Robot
 
         private Mesh prepareTarget()
         {
-            //【几何-目标】
             Geometry geometry = new Geometry();
             geometry = geometry.createSphere(0.1f);
 
-            //【Material】
             Material material = new Material();
 
             material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/target.jpg", 0);
             material.mType = MaterialType.PhongMaterial;
 
-            //【Meshe】
             Mesh mesh = new Mesh(geometry, material);
 
 
@@ -1091,24 +843,16 @@ namespace OpenTK_Winform_Robot
             return mesh;
         }
 
-        /// <summary>
-        /// 【骨骼】
-        /// </summary>
         private Mesh prepareBones()
         {
-            //【几何-1】
             Geometry geometry = new Geometry();
-            geometry = geometry.createBox(0.001f);  //0.1
+            geometry = geometry.createBox(0.001f);  
 
-            //【Material】
             Material material = new Material();
 
             material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/bone.png", 0);
             material.mType = MaterialType.PhongMaterial;
             
-            //material.mSpecularMask = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/sp_mask.png", 1);
-
-            //【Meshes】
             Mesh mesh_0 = new Mesh(geometry, material);
             Mesh mesh_1 = new Mesh(geometry, material);
             Mesh mesh_2 = new Mesh(geometry, material);
@@ -1121,8 +865,6 @@ namespace OpenTK_Winform_Robot
             Mesh mesh_9 = new Mesh(geometry, material);
             Mesh mesh_10 = new Mesh(geometry, material);
             Mesh mesh_11 = new Mesh(geometry, material);
-
-            //setModelBlend(mesh_11, true, 0.0f);  // 设置骨骼透明度
 
             mesh_0.SetName("关节0");
             mesh_1.SetName("关节1");
@@ -1162,13 +904,8 @@ namespace OpenTK_Winform_Robot
             mesh_9.addChild(mesh_10);
             mesh_10.addChild(mesh_11);
 
-            //mesh_1.setAngleY(30.0f);
-            //【创建父子关系】
             return mesh_0;
         }
-        /// <summary>
-        /// 【设置模型的透明度】
-        /// </summary>
         private void setModelBlend(Object obj, bool blend, float opacity)
         {
 
@@ -1200,58 +937,25 @@ namespace OpenTK_Winform_Robot
             }
         }
 
-        /// <summary>
-        /// 【准备天空盒】
-        /// </summary>
         private Mesh prepareSkyBox()
         {
-            /////------------【天空盒相关-Cube】-------------
-            //List<string> paths = new List<string>{
-            //    Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/right.jpg",
-            //    Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/left.jpg",
-            //    Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/top.jpg",
-            //    Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/bottom.jpg",
-            //    Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/back.jpg",
-            //    Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/front.jpg",
-            //};
-            //Texture envTex = new Texture(paths, 0);
-            //Geometry cubeGeometry = new Geometry();
-            //cubeGeometry = cubeGeometry.createBox(1.0f);
-            //Material cubeMaterial = new Material();
-            //cubeMaterial.mType = MaterialType.CubeMaterial;
-            //cubeMaterial.mDiffuse = envTex;
-            //cubeMaterial.mDepthWrite = false;  //关闭【深度写入】
-            //Mesh cubeMesh = new Mesh(cubeGeometry, cubeMaterial);
-            //scene.addChild(cubeMesh);
-            /////------------【天空盒相关-Cube】-------------
-
-            ///------------【天空盒相关-球形】-------------
             Texture envTex = new Texture(projectRoot + "/Resources/Textures/skybox/sphericalMap.png", 0);
             Geometry cubeGeometry = new Geometry();
             cubeGeometry = cubeGeometry.createBox(1.0f);
             Material sphereMaterial = new Material();
             sphereMaterial.mType = MaterialType.SphereMaterial;
             sphereMaterial.mDiffuse = envTex;
-            sphereMaterial.mDepthWrite = false;  //关闭【深度写入】
+            sphereMaterial.mDepthWrite = false;  
             sphereMaterial.mCullFace = CullFaceMode.Front;
             Mesh cubeMesh = new Mesh(cubeGeometry, sphereMaterial);
             return cubeMesh;
-            ///------------【天空盒相关-球形】-------------
         }
 
-        /// <summary>
-        ///  【末端执行器】位置信息
-        /// </summary>
         private double[] showEndPosition()
         {
             Matrix4 modelTransform = listJoints[11].getMesh().GetModelMatrix();
             modelTransform = Matrix4.Transpose(modelTransform);
             endEffectorPos = modelTransform * new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-
-            //Matrix4 transform = scene.mChildren[1].GetModelMatrix();  //【父系】变换矩阵
-            //transform = Matrix4.Transpose(transform);
-            //Vector4 worldPosition = transform *new Vector4(global.w_position_12, 1.0f);
-            //lab_px.Text = "X坐标：" + (endEffectorPos.X*1000).ToString("F2") + "\r\nY坐标：" + (endEffectorPos.Y * 1000).ToString("F2") + "\r\nZ坐标：" + (endEffectorPos.Z * 1000).ToString("F2");
 
             lab_px.Text = (modelTransform.M14 * 1000).ToString("F2");
             lab_py.Text = (modelTransform.M24 * 1000).ToString("F2");
@@ -1269,54 +973,41 @@ namespace OpenTK_Winform_Robot
             Matrix4 modelTransform10 = listJoints[10].getMesh().GetModelMatrix();
             modelTransform10 = Matrix4.Transpose(modelTransform10);
             endEffectorPos10 = modelTransform10 * (new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-            //label14.Text = "X坐标：" + (endEffectorPos10.X * 1000).ToString("F2") + "\r\nY坐标：" + (endEffectorPos10.Y * 1000).ToString("F2") + "\r\nZ坐标：" + (endEffectorPos10.Z * 1000).ToString("F2");
-            //glControl1_Paint(null, null);
             double[] pos_xyz = new double[12];
 
-            pos_xyz[0] = Convert.ToDouble(modelTransform.M11); // nx
-            pos_xyz[1] = Convert.ToDouble(modelTransform.M21); // ny
-            pos_xyz[2] = Convert.ToDouble(modelTransform.M31); // nz
+            pos_xyz[0] = Convert.ToDouble(modelTransform.M11);  
+            pos_xyz[1] = Convert.ToDouble(modelTransform.M21);  
+            pos_xyz[2] = Convert.ToDouble(modelTransform.M31);  
 
-            pos_xyz[3] = Convert.ToDouble(modelTransform.M12); // ox
-            pos_xyz[4] = Convert.ToDouble(modelTransform.M22); // oy
-            pos_xyz[5] = Convert.ToDouble(modelTransform.M32); // oz
+            pos_xyz[3] = Convert.ToDouble(modelTransform.M12);  
+            pos_xyz[4] = Convert.ToDouble(modelTransform.M22);  
+            pos_xyz[5] = Convert.ToDouble(modelTransform.M32);  
 
-            pos_xyz[6] = Convert.ToDouble(modelTransform.M13); // ax
-            pos_xyz[7] = Convert.ToDouble(modelTransform.M23); // ay
-            pos_xyz[8] = Convert.ToDouble(modelTransform.M33); // az
+            pos_xyz[6] = Convert.ToDouble(modelTransform.M13);  
+            pos_xyz[7] = Convert.ToDouble(modelTransform.M23);  
+            pos_xyz[8] = Convert.ToDouble(modelTransform.M33);  
 
-            pos_xyz[9] = Convert.ToDouble(modelTransform.M14);  // px
-            pos_xyz[10] = Convert.ToDouble(modelTransform.M24); // py
-            pos_xyz[11] = Convert.ToDouble(modelTransform.M34); // pz
+            pos_xyz[9] = Convert.ToDouble(modelTransform.M14);   
+            pos_xyz[10] = Convert.ToDouble(modelTransform.M24);  
+            pos_xyz[11] = Convert.ToDouble(modelTransform.M34);  
             return pos_xyz;
         }
 
-        /// <summary>
-        /// 【1-大臂移动-外段】
-        /// </summary>
         private void trackBar_1_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar_1.Value / 10.0);
             Txt1.Text = ((float)trackBar_1.Maximum / 10.0 - change_val).ToString("F1");
             moveJoint1(change_val);
 
-            //Txt1.Text = trackBar_1.Value.ToString();
-            //moveJoint1(trackBar_1.Value);
         }
 
         private void moveJoint1(float val)
         {
-            //【后臂】移动
             Vector3 changedValue = new Vector3(0.0f, 0.0f, -val / 1000.0f);
             find_joint1.SetPosition(changedValue);
-            //scene.mChildren[0].mChildren[0].mChildren[2].SetPosition(newPosition);
-
             listJoints[0].getMesh().SetPosition(changedValue);
             showEndPosition();
         }
-        /// <summary>
-        /// 【1-大臂移动-内段】
-        /// </summary>
         private void trackBar9_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar9.Value / 10.0);
@@ -1326,7 +1017,6 @@ namespace OpenTK_Winform_Robot
 
         private void moveJoint2(float val)
         {
-            //【前臂】移动
             Vector3 changedValue = new Vector3(0.0f, val / 1000.0f, 0.0f);
 
             find_joint2.SetPosition(changedValue);
@@ -1337,9 +1027,6 @@ namespace OpenTK_Winform_Robot
 
             showEndPosition();
         }
-        /// <summary>
-        /// 【2-小臂回旋】
-        /// </summary>
         private void trackBar_2_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar_2.Value / 10.0);
@@ -1350,16 +1037,11 @@ namespace OpenTK_Winform_Robot
         private void moveJoint3(float val)
         {
             find_joint3.SetAngle2((float)val);
-            //scene.mChildren[0].mChildren[0].mChildren[2].mChildren[1].SetAngle2((float)trackBar_2.Value);
-
             listJoints[2].getMesh().setAngleY((float)val);
 
             showEndPosition();
         }
 
-        /// <summary>
-        /// 【3-小臂俯仰】
-        /// </summary>
         private void trackBar_3_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar_3.Value / 10.0);
@@ -1369,15 +1051,10 @@ namespace OpenTK_Winform_Robot
         private void moveJoint4(float val)
         {
             find_joint4.SetAngle3((float)val);
-            //scene.mChildren[0].mChildren[0].mChildren[2].mChildren[1].mChildren[0].SetAngle3((float)trackBar_3.Value);
-
             listJoints[4].getMesh().setAngleX((float)val);
 
             showEndPosition();
         }
-        /// <summary>
-        /// 【4-小臂移动-中段】
-        /// </summary>
         private void trackBar_4_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar_4.Value / 10.0);
@@ -1387,17 +1064,12 @@ namespace OpenTK_Winform_Robot
         private void moveJoint5(float val)
         {
             find_joint5.SetPosition(new Vector3(0.0f, val / 1000.0f, 0.0f));
-            //scene.mChildren[0].mChildren[0].mChildren[2].mChildren[1].mChildren[0].mChildren[1].SetPosition(newPosition);
-
             Vector3 changedValue = new Vector3(0.0f, 0.0f, val / 1000.0f);
             Vector3 offset = global.w_position_6 - global.w_position_5;
             listJoints[6].getMesh().SetPosition(offset - changedValue);
 
             showEndPosition();
         }
-        /// <summary>
-        /// 【4-小臂移动-前段】
-        /// </summary>
         private void trackBar10_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar10.Value / 10.0);
@@ -1407,51 +1079,36 @@ namespace OpenTK_Winform_Robot
         private void moveJoint6(float val)
         {
             find_joint6.SetPosition(new Vector3(0.0f, val / 1000.0f, 0.0f));
-            //scene.mChildren[0].mChildren[0].mChildren[2].mChildren[1].mChildren[0].mChildren[1].SetPosition(newPosition);
-
             Vector3 changedValue = new Vector3(0.0f, 0.0f, val / 1000.0f);
             Vector3 offset = global.w_position_7 - global.w_position_6;
             listJoints[7].getMesh().SetPosition(offset - changedValue);
 
             showEndPosition();
         }
-        /// <summary>
-        /// 初始化
-        /// </summary>
         private void init_Pos()
         {
-            //小臂前段
             trackBar10.Value = trackBar10.Maximum;
             trackBar10_Scroll(null, null);
 
-            //小臂中段
             trackBar_4.Value = trackBar_4.Maximum;
             trackBar_4_Scroll(null, null);
 
-            //大臂内段
             trackBar9.Value = trackBar9.Maximum;
             trackBar9_Scroll(null, null);
 
-            //大臂外段
             trackBar_1.Value = trackBar_1.Maximum;
             trackBar_1_Scroll(null, null);
 
         }
 
 
-        /// <summary>
-        /// 透明度滑轮
-        /// </summary>
         private void trackBar8_Scroll(object sender, EventArgs e)
         {
-            float opacity = trackBar8.Value / 10.0f;   //【缩放】灵敏度
+            float opacity = trackBar8.Value / 10.0f;   
 
             setModelBlend(robotModel, true, opacity);
             glControl1_Paint(null, null);
         }
-        /// <summary>
-        /// 【腕部平摆】
-        /// </summary>
         private void trackBar_5_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar_5.Value / 10.0);
@@ -1464,9 +1121,6 @@ namespace OpenTK_Winform_Robot
             listJoints[8].getMesh().setAngleY(val);
             showEndPosition();
         }
-        /// <summary>
-        /// 【腕部俯仰】
-        /// </summary>
         private void trackBar6_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar6.Value / 10.0);
@@ -1479,9 +1133,6 @@ namespace OpenTK_Winform_Robot
             listJoints[9].getMesh().setAngleX(val);
             showEndPosition();
         }
-        /// <summary>
-        /// 【腕部滚摆】
-        /// </summary>
         private void trackBar7_Scroll(object sender, EventArgs e)
         {
             float change_val = (float)(trackBar7.Value / 10.0);
@@ -1498,9 +1149,8 @@ namespace OpenTK_Winform_Robot
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (!Common.check_Tex(Txt1.Text)) return;  // 检查内容是否合法
+            if (!Common.check_Tex(Txt1.Text)) return;   
 
-            // 检查上下界
             if (Convert.ToDouble(Txt1.Text) > 5600) Txt1.Text = "5600.0";
             if (Convert.ToDouble(Txt1.Text) < 0) Txt1.Text = "0.0";
 
@@ -1511,7 +1161,6 @@ namespace OpenTK_Winform_Robot
         private void Txt2_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt2.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt2.Text) > 5900) Txt2.Text = "5900.0";
             if (Convert.ToDouble(Txt2.Text) < 0) Txt2.Text = "0.0";
 
@@ -1522,7 +1171,6 @@ namespace OpenTK_Winform_Robot
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt3.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt3.Text) > 180) Txt3.Text = "180.0";
             if (Convert.ToDouble(Txt3.Text) < -180) Txt3.Text = "-180.0";
 
@@ -1533,7 +1181,6 @@ namespace OpenTK_Winform_Robot
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt4.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt4.Text) > 40) Txt4.Text = "40.0";
             if (Convert.ToDouble(Txt4.Text) < -35) Txt4.Text = "-35.0";
 
@@ -1544,7 +1191,6 @@ namespace OpenTK_Winform_Robot
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt5.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt5.Text) > 1500) Txt5.Text = "1500.0";
             if (Convert.ToDouble(Txt5.Text) < 0) Txt5.Text = "0.0";
 
@@ -1555,7 +1201,6 @@ namespace OpenTK_Winform_Robot
         private void textBox12_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt6.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt6.Text) > 1500) Txt6.Text = "1500.0";
             if (Convert.ToDouble(Txt6.Text) < 0) Txt6.Text = "0.0";
 
@@ -1567,7 +1212,6 @@ namespace OpenTK_Winform_Robot
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt7.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt7.Text) > 75) Txt7.Text = "75.0";
             if (Convert.ToDouble(Txt7.Text) < -75) Txt7.Text = "-75.0";
 
@@ -1578,7 +1222,6 @@ namespace OpenTK_Winform_Robot
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt8.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt8.Text) > 30) Txt8.Text = "30.0";
             if (Convert.ToDouble(Txt8.Text) < -105) Txt8.Text = "-105.0";
 
@@ -1589,7 +1232,6 @@ namespace OpenTK_Winform_Robot
         private void textBox7_TextChanged(object sender, EventArgs e)
         {
             if (!Common.check_Tex(Txt9.Text)) return;
-            // 检查上下界
             if (Convert.ToDouble(Txt9.Text) > 180) Txt9.Text = "180.0";
             if (Convert.ToDouble(Txt9.Text) < -180) Txt9.Text = "-180.0";
 
@@ -1598,37 +1240,29 @@ namespace OpenTK_Winform_Robot
         }
 
        
-        /// <summary>
-        /// 导入文件，并显示工作空间
-        /// </summary>
         private Dictionary<int, InstancedMesh> InstancedMeshDict = new Dictionary<int, InstancedMesh>();
-        private int rowCount;  // 工作空间点数
-        string showPath=@"J:\同步空间\BaiduSyncdisk\Matlab\路径规划\Data";    //
+        private int rowCount;   
+        string showPath=@"J:\同步空间\BaiduSyncdisk\Matlab\路径规划\Data";    
         private void btn_show_workspace_Click(object sender, EventArgs e)
         {
-            int instance_Lim = 100; //单个实例数目限制
+            int instance_Lim = 100; 
             richTextBox2.Clear();
 
             if (btn_show_workspace.Text == "Show")
             {
 
-                //【创建多实例】
-                Geometry geometry = new Geometry();         //【几何-目标】
-                geometry = geometry.createSphere(0.02f);    // 空间点大小  0.05f
+                Geometry geometry = new Geometry();         
+                geometry = geometry.createSphere(0.02f);       
                 
 
-                //【Material】
                 Material material = new Material();
-                //material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/yellow.png", 0);
-                //material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/bone.png", 0);
                 material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/green.png", 0);
                 material.mType = MaterialType.PhongInstanceMaterial;
-                material.mShiness = 64.0f; //高光强度
+                material.mShiness = 64.0f; 
 
                 
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                //openFileDialog.InitialDirectory = @"J:\同步空间\BaiduSyncdisk\Matlab\机器人学\Data";  //默认打开目录
-                openFileDialog.InitialDirectory = showPath;  //默认打开目录
+                openFileDialog.InitialDirectory = showPath;  
                 openFileDialog.Filter = "文本文件 (*.xlsx)|*.xlsx|所有文件 (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
@@ -1637,16 +1271,15 @@ namespace OpenTK_Winform_Robot
                 {
                     btn_show_workspace.Text = "Clear";
 
-                    showPath = openFileDialog.FileName; //记录选中的目录  
+                    showPath = openFileDialog.FileName;   
                     XLWorkbook inventory_rb = new XLWorkbook(showPath);
-                    IXLWorksheet worksheet = inventory_rb.Worksheet(1);  // 获取第一个工作表
+                    IXLWorksheet worksheet = inventory_rb.Worksheet(1);   
 
-                    rowCount = worksheet.RowsUsed().Count();  // 获取工作表的总行数
+                    rowCount = worksheet.RowsUsed().Count();   
 
                     for (int i = 1; i < rowCount + 1; i++)
                     {
 
-                        // 读取单元格内容
                         float x = (float)Convert.ToDouble(worksheet.Cell(i, 1).Value.ToString()) / 1000.0f;
                         float y = (float)Convert.ToDouble(worksheet.Cell(i, 2).Value.ToString()) / 1000.0f;
                         float z = (float)Convert.ToDouble(worksheet.Cell(i, 3).Value.ToString()) / 1000.0f;
@@ -1697,9 +1330,9 @@ namespace OpenTK_Winform_Robot
             glControl1_Paint(null, null);
         }
 
-        double[] q_con = new double[7]; //【初始】关节量
-        double[] q = new double[7];     //【动态】关节量
-        Vector<double> target_pos;      //【目标点】
+        double[] q_con = new double[7]; 
+        double[] q = new double[7];     
+        Vector<double> target_pos;      
         double w_k = 1e-6;
         double w_1 = 1;
         double w_2 = 1;
@@ -1707,23 +1340,18 @@ namespace OpenTK_Winform_Robot
         private void btn_updateJoint_Click(object sender, EventArgs e)
         {
 
-            // 创建 Stopwatch 对象
             Stopwatch timeWatch = new Stopwatch();
-            timeWatch.Start(); // 开始计时
+            timeWatch.Start();  
 
             updateJoint();
 
-            timeWatch.Stop(); // 停止计时
+            timeWatch.Stop();  
             groupBox8.Text = "逆向运动学(" + timeWatch.ElapsedMilliseconds + "ms)";
         }
-        /// <summary>
-        /// 更新机器人姿态
-        /// </summary>
-        int iter_num = 1;    //单次求解迭代次数
+        int iter_num = 1;    
         private (double, double, double[]) updateJoint(bool showAnimation = false)
         {
-            double change_val = 0; //驱动变化量
-            //【期望位姿】
+            double change_val = 0; 
             Matrix<double> d_w = Matrix<double>.Build.DenseOfArray(new double[,] {
                         {Convert.ToDouble(Txt_n_x.Text), Convert.ToDouble(Txt_o_x.Text), Convert.ToDouble(Txt_a_x.Text), Convert.ToDouble(Txt_p_x.Text)},
                         {Convert.ToDouble(Txt_n_y.Text), Convert.ToDouble(Txt_o_y.Text), Convert.ToDouble(Txt_a_y.Text), Convert.ToDouble(Txt_p_y.Text)},
@@ -1732,9 +1360,9 @@ namespace OpenTK_Winform_Robot
             Matrix<double> T08 = null;
             for (int i = 0; i < 7; i++)
             {
-                string CMD_W_J = "0" + (i + 1).ToString();  //基坐标-关节坐标
-                string CMD_J_E = (i + 1).ToString() + "8";  //关节坐标-末端执行器
-                q_con = Common.convertJoint(q[0], q[1], q[2], q[3], q[4], q[5], q[6]); //初始角度-转换后
+                string CMD_W_J = "0" + (i + 1).ToString();  
+                string CMD_J_E = (i + 1).ToString() + "8";  
+                q_con = Common.convertJoint(q[0], q[1], q[2], q[3], q[4], q[5], q[6]); 
                 T08 = Common.Fkine_LH4500(q_con[0], q_con[1], q_con[2], q_con[3], q_con[4], q_con[5], q_con[6], "08");
                 Matrix<double> T0j = Common.Fkine_LH4500(q_con[0], q_con[1], q_con[2], q_con[3], q_con[4], q_con[5], q_con[6], CMD_W_J);
                 Matrix<double> Tj8 = Common.Fkine_LH4500(q_con[0], q_con[1], q_con[2], q_con[3], q_con[4], q_con[5], q_con[6], CMD_J_E);
@@ -1742,27 +1370,23 @@ namespace OpenTK_Winform_Robot
 
                 if (i == 0 || i == 3)
                 {
-                    //【移动部分】-----------------
-                    //Vector<double> Z_P = T0j.Column(2).SubVector(0, 3);
                     Vector<double> Z_P = T0j.SubMatrix(0, 3, 0, 3).Inverse() * T0j.Column(2).SubVector(0, 3);
-                    double tc = pc_j.DotProduct(Z_P) / Z_P.DotProduct(Z_P);    //关节到初始垂足系数
-                    Vector<double> pt_j = tc * Z_P;                        //初始垂足向量
+                    double tc = pc_j.DotProduct(Z_P) / Z_P.DotProduct(Z_P);    
+                    Vector<double> pt_j = tc * Z_P;                        
 
                     Vector<double> pd_w_P = Vector<double>.Build.DenseOfArray(new double[] { target_pos[0], target_pos[1], target_pos[2], 1 });
                     Vector<double> pd_j_P = T0j.Inverse() * pd_w_P;
-                    double td = pd_j_P.SubVector(0, 3).DotProduct(Z_P) / Z_P.DotProduct(Z_P);    //关节到初始垂足系数
+                    double td = pd_j_P.SubVector(0, 3).DotProduct(Z_P) / Z_P.DotProduct(Z_P);    
                     Vector<double> pt_j_ = td * Z_P;
 
-                    Vector<double> deta_d = pt_j_ - pt_j; // 计算垂足间向量
-                    change_val = deta_d.L2Norm(); //计算移动关节变动量使用 L2Norm 计算范数
+                    Vector<double> deta_d = pt_j_ - pt_j;  
+                    change_val = deta_d.L2Norm();   
 
-                    if (deta_d.DotProduct(Z_P) < 0) change_val = -change_val; // 如果条件满足，取负值
+                    if (deta_d.DotProduct(Z_P) < 0) change_val = -change_val;  
                 }
 
                 if (i == 1 || i == 2 || i == 4 || i == 5 || i == 6)
                 {
-                    //【旋转部分】-------------
-
                     Vector<double> pd_w_R = target_pos - T0j.Column(3).SubVector(0, 3);
                     Vector<double> pd_j_R = T0j.SubMatrix(0, 3, 0, 3).Inverse() * pd_w_R;
 
@@ -1792,15 +1416,10 @@ namespace OpenTK_Winform_Robot
                     }
                     double B = w_1 * pd_j_R.DotProduct(pc_j) - w_1 * pd_j_R.DotProduct(Z_R) + w_2 * b_temp;
 
-                    //Vector<double> a = CrossProduct(Z_R, pc_j); // 计算叉乘
-                    //double A = pd_j_R.DotProduct(a);
-                    //double B = pd_j_R.DotProduct(pc_j) - pd_j_R.DotProduct(Z_R) * Z_R.DotProduct(pc_j);
-
                     double beta = Math.Atan2(B, A[0, 0]);
                     change_val = Math.PI / 2 - beta;
 
 
-                    // 循环查找合适的 change_val
                     double temp;
                     for (int j = -2; j <= 2; j++)
                     {
@@ -1812,15 +1431,12 @@ namespace OpenTK_Winform_Robot
                         }
                     }
                 }
-                //限制对比
                 if (q[i] + change_val < global.q_lim[i, 0]) change_val = global.q_lim[i, 0] - q[i];
                 if (q[i] + change_val > global.q_lim[i, 1]) change_val = global.q_lim[i, 1] - q[i];
-                q[i] = q[i] + change_val; // 更新驱动关节
+                q[i] = q[i] + change_val;  
 
-                //将新关节更新到界面上
                 if (showAnimation)
                 {
-                    //【关节1】
                     if (q[0] > 5600)
                     {
                         Txt1.Text = "5600.0";
@@ -1832,7 +1448,6 @@ namespace OpenTK_Winform_Robot
                         Txt2.Text = "0.0";
                     }
 
-                    //【关节4】
                     if (q[3] > 1500)
                     {
                         Txt5.Text = "1500.0";
@@ -1852,9 +1467,7 @@ namespace OpenTK_Winform_Robot
                 }
             }
 
-            //【位置误差】
             double e1 = (target_pos - T08.Column(3).SubVector(0, 3)).L2Norm();
-            //【姿态误差】
             Matrix<double> d = d_w;
             Matrix<double> c = T08.SubMatrix(0, 3, 0, 3);
             double e2 = 0.0;
@@ -1864,23 +1477,18 @@ namespace OpenTK_Winform_Robot
                 Vector<double> c_v = c.Column(u);
                 e2 = e2 + Math.Pow(d_v.DotProduct(c_v) - 1, 2);
             }
-            //Thread.Sleep(2000); //暂停
-
 
             richTextBox3.AppendText(iter_num.ToString() + ":" + Math.Round(e2, 2) + System.Environment.NewLine);
 
 
-            richTextBox3.SelectionStart = richTextBox3.Text.Length; // 将光标移动到最后一行
-            richTextBox3.ScrollToCaret(); // 滚动到光标处
+            richTextBox3.SelectionStart = richTextBox3.Text.Length;  
+            richTextBox3.ScrollToCaret();  
 
             iter_num = iter_num + 1;
 
             return (e1, e2, q);
         }
 
-        /// <summary>
-        /// 向量外积
-        /// </summary>
         static Vector<double> CrossProduct(Vector<double> a, Vector<double> b)
         {
             if (a.Count != 3 || b.Count != 3)
@@ -1888,7 +1496,6 @@ namespace OpenTK_Winform_Robot
                 throw new ArgumentException("Both vectors must be three-dimensional.");
             }
 
-            // 计算叉乘
             double x = a[1] * b[2] - a[2] * b[1];
             double y = a[2] * b[0] - a[0] * b[2];
             double z = a[0] * b[1] - a[1] * b[0];
@@ -1896,9 +1503,6 @@ namespace OpenTK_Winform_Robot
             return Vector.Build.DenseOfArray(new double[] { x, y, z });
         }
 
-        /// <summary>
-        /// 正向运动学
-        /// </summary>
         private void btn_FK_Click(object sender, EventArgs e)
         {
             double V1 = 6658.2;
@@ -1908,11 +1512,9 @@ namespace OpenTK_Winform_Robot
             double V5 = -20.3;
             double V6 = -6.35;
             double V7 = 111.5;
-            double[] q = Common.convertJoint(V1, V2 * (Math.PI / 180), V3 * (Math.PI / 180), V4, V5 * (Math.PI / 180), V6 * (Math.PI / 180), V7 * (Math.PI / 180)); //初始角度
+            double[] q = Common.convertJoint(V1, V2 * (Math.PI / 180), V3 * (Math.PI / 180), V4, V5 * (Math.PI / 180), V6 * (Math.PI / 180), V7 * (Math.PI / 180)); 
 
-            // 计算齐次变换矩阵
             Matrix<double> T = Common.Fkine_LH4500(q[0], q[1], q[2], q[3], q[4], q[5], q[6], "08");
-            // 输出结果到 richTextBox1
             richTextBox1.Clear();
 
             for (int i = 0; i < 4; i++)
@@ -1927,9 +1529,6 @@ namespace OpenTK_Winform_Robot
         }
 
 
-        /// <summary>
-        /// 磨机显示控制
-        /// </summary>
         private void chk_MJ01_CheckedChanged(object sender, EventArgs e)
         {
             if (!chk_MJ01.Checked) global.scene.removeChild(MJ01);
@@ -1964,10 +1563,6 @@ namespace OpenTK_Winform_Robot
         double[] q_star;
         
 
-        /// <summary>
-        /// 寻找目标
-        /// </summary>
-        //double q_current;
         private void timer2_Tick(object sender, EventArgs e)
         {
             if (num_current > num_fresh)
@@ -1978,7 +1573,7 @@ namespace OpenTK_Winform_Robot
 
             if (move_joint > 4)
             {
-                Task.Delay(1000).Wait(); // 异步方式，但阻塞调用者
+                Task.Delay(1000).Wait();  
                 timer2.Enabled = false;
 
                 num_current = 0;
@@ -1988,7 +1583,7 @@ namespace OpenTK_Winform_Robot
 
             switch (move_joint)
             {
-                case 1: // 【关节1动画】
+                case 1:  
                     double q_current_1 = num_current * move_step[0];
 
                     if (q_current_1 > 5600)
@@ -2003,17 +1598,17 @@ namespace OpenTK_Winform_Robot
                     }
                     break;
 
-                case 2: // 【关节2动画】
+                case 2:  
                     double q_current_2 = num_current * move_step[1];
                     Txt3.Text = q_current_2.ToString();
                     break;
 
-                case 3: // 【关节3动画】
+                case 3:  
                     double q_current_3 = num_current * move_step[2];
                     Txt4.Text = q_current_3.ToString();
                     break;
 
-                case 4: // 【关节4动画】
+                case 4:  
                     double q_current_4 = num_current * move_step[3];
                     if (q_current_4 > 1500)
                     {
@@ -2027,17 +1622,14 @@ namespace OpenTK_Winform_Robot
                     }
 
 
-                    // 【关节5动画】
                     double q_current_5 = num_current * move_step[4];
                     Txt7.Text = q_current_5.ToString();
 
 
-                    // 【关节6动画】
                     double q_current_6 = num_current * move_step[5];
                     Txt8.Text = q_current_6.ToString();
 
 
-                    // 【关节7动画】
                     double q_current_7 = num_current * move_step[6];
                     Txt9.Text = q_current_7.ToString();
                     break;
@@ -2046,9 +1638,6 @@ namespace OpenTK_Winform_Robot
             num_current += 1;
         }
 
-        /// <summary>
-        /// 【返回】
-        /// </summary>
         double[] endObject_xyz;
         private void timer3_Tick(object sender, EventArgs e)
         {
@@ -2056,7 +1645,6 @@ namespace OpenTK_Winform_Robot
 
             if (move_joint < 1)
             {
-                //btn_IK_Click(null, null);
                 timer3.Enabled = false;
             }
 
@@ -2066,14 +1654,12 @@ namespace OpenTK_Winform_Robot
                 move_joint -= 1;
             }
 
-            // 目标点跟随
-            //Object endObject = findJoint(global.scene, "目标点");
             endObject_xyz = showEndPosition();
             global.targetPoint.SetPosition(new Vector3((float)endObject_xyz[9], (float)endObject_xyz[10], (float)endObject_xyz[11]));
 
             switch (move_joint)
             {
-                case 1: // 【关节1动画】
+                case 1:  
                     double q_current_1 = (num_fresh - num_current) * move_step[0];
                     if (q_current_1 > 5600)
                     {
@@ -2087,17 +1673,17 @@ namespace OpenTK_Winform_Robot
                     }
                     break;
 
-                case 2: // 【关节2动画】
+                case 2:  
                     double q_current_2 = (num_fresh - num_current) * move_step[1];
                     Txt3.Text = q_current_2.ToString();
                     break;
 
-                case 3: // 【关节3动画】
+                case 3:  
                     double q_current_3 = (num_fresh - num_current) * move_step[2];
                     Txt4.Text = q_current_3.ToString();
                     break;
 
-                case 4: // 【关节4动画】
+                case 4:  
                     double q_current_4 = (num_fresh - num_current) * move_step[3];
                     if (q_current_4 > 1500)
                     {
@@ -2110,16 +1696,13 @@ namespace OpenTK_Winform_Robot
                         Txt6.Text = "0.0";
                     }
 
-                    // 【关节5动画】
                     double q_current_5 = (num_fresh - num_current) * move_step[4];
                     Txt7.Text = q_current_5.ToString();
 
 
-                    // 【关节6动画】
                     double q_current_6 = (num_fresh - num_current) * move_step[5];
                     Txt8.Text = q_current_6.ToString();
 
-                    // 【关节7动画】
                     double q_current_7 = (num_fresh - num_current) * move_step[6];
                     Txt9.Text = q_current_7.ToString();
                     break;
@@ -2127,27 +1710,20 @@ namespace OpenTK_Winform_Robot
             num_current += 1;
         }
 
-        /// <summary>
-        /// 【生成测试轨迹样本】
-        /// </summary>
-        // 定义存储结果的列表
         List<double[]> q_current_list = new List<double[]>();
         List<double[]> Td_list = new List<double[]>();
         double[] endTd;
         private void timer4_Tick(object sender, EventArgs e)
         {
-            // 定义一个数组来存储当前循环的 q_current_1 到 q_current_7
             double[] q_current_array = new double[7];
 
             if (num_current > num_fresh-1)
             {
-                //num_current = 0;
                 timer4.Enabled = false;
                 
             }
 
-            // 【关节1动画】
-            q_current_array[0] = num_current * move_step[0]; // q_current_1
+            q_current_array[0] = num_current * move_step[0];  
             if (q_current_array[0] > 5600)
             {
                 Txt1.Text = "5600.0";
@@ -2159,16 +1735,13 @@ namespace OpenTK_Winform_Robot
                 Txt2.Text = "0.0";
             }
 
-            // 【关节2动画】
-            q_current_array[1] = num_current * move_step[1]; // q_current_2
+            q_current_array[1] = num_current * move_step[1];  
             Txt3.Text = q_current_array[1].ToString();
 
-            // 【关节3动画】
-            q_current_array[2] = num_current * move_step[2]; // q_current_3
+            q_current_array[2] = num_current * move_step[2];  
             Txt4.Text = q_current_array[2].ToString();
 
-            // 【关节4动画】
-            q_current_array[3] = num_current * move_step[3]; // q_current_4
+            q_current_array[3] = num_current * move_step[3];  
             if (q_current_array[3] > 1500)
             {
                 Txt5.Text = "1500.0";
@@ -2180,37 +1753,27 @@ namespace OpenTK_Winform_Robot
                 Txt6.Text = "0.0";
             }
 
-            // 【关节5动画】
-            q_current_array[4] = num_current * move_step[4]; // q_current_5
+            q_current_array[4] = num_current * move_step[4];  
             Txt7.Text = q_current_array[4].ToString();
 
-            // 【关节6动画】
-            q_current_array[5] = num_current * move_step[5]; // q_current_6
+            q_current_array[5] = num_current * move_step[5];  
             Txt8.Text = q_current_array[5].ToString();
 
-            // 【关节7动画】
-            q_current_array[6] = num_current * move_step[6]; // q_current_7
+            q_current_array[6] = num_current * move_step[6];  
             Txt9.Text = q_current_array[6].ToString();
 
-            // 将当前数组添加到列表中-【关节变化数据】
             q_current_list.Add(q_current_array);
 
-            // 【期望齐次矩阵变化数据】
             endTd = showEndPosition();
             Td_list.Add(endObject_xyz);
 
 
-            // 打印齐次矩阵信息
-            //Console.WriteLine($"Iteration {num_current + 1}: {string.Join(", ", endTd)}");
-            // 打印关节信息
-            Console.WriteLine($"Iteration {num_current + 1}: {string.Join(", ", q_current_array)}");
             num_current += 1;
         }
 
 
         private void chk_CB01_CheckedChanged(object sender, EventArgs e)
         {
-            // removeChild 只能删除直系的对象
             if (!chk_CB01.Checked) findJoint(robotModel, "坐标7_腕部滚摆").removeChild(CB01);
             else findJoint(robotModel, "坐标7_腕部滚摆").addChild(CB01);
         }
@@ -2225,14 +1788,11 @@ namespace OpenTK_Winform_Robot
             if (!chk_manipulator.Checked) global.scene.removeChild(robotModel);
             else global.scene.addChild(robotModel);
         }
-        /// <summary>
-        /// 相机【俯视图】
-        /// </summary>
         private void btn_FS_Click(object sender, EventArgs e)
         {
-            camera._position= new Vector3(0.0f, 15.0f, 10.0f); //【摄像机位置】
-            camera._right= new Vector3(0.0f, 0.0f, -1.0f);  //【摄像机右侧】
-            camera._up = new Vector3(-1.0f, 0.0f, 0.0f);  //【摄像机顶部】
+            camera._position= new Vector3(0.0f, 15.0f, 10.0f); 
+            camera._right= new Vector3(0.0f, 0.0f, -1.0f);  
+            camera._up = new Vector3(-1.0f, 0.0f, 0.0f);  
 
             chk_MJ01.Checked = false;
             chk_MJ02.Checked = true;
@@ -2241,37 +1801,28 @@ namespace OpenTK_Winform_Robot
         }
 
 
-        /// <summary>
-        /// 相机【侧视图】
-        /// </summary>
         private void btn_CS_Click(object sender, EventArgs e)
         {
-            camera._position = new Vector3(12.0f, 1.0f, 12.0f); ; //【摄像机位置】
-            camera._right = new Vector3(0.0f, 0.0f, -1.0f);  //【摄像机右侧】
-            camera._up = Vector3.UnitY;  //【摄像机顶部】
+            camera._position = new Vector3(12.0f, 1.0f, 12.0f); ; 
+            camera._right = new Vector3(0.0f, 0.0f, -1.0f);  
+            camera._up = Vector3.UnitY;  
 
             chk_MJ01.Checked = true;
             chk_MJ02.Checked = true;
             chk_MJ03.Checked = false;
             chk_MJ04.Checked = false;
         }
-        /// <summary>
-        /// 相机【正视图】
-        /// </summary>
         private void btn_ZS_Click(object sender, EventArgs e)
         {
-            camera._position = new Vector3(0.0f, 1.0f, 18.0f); ; //【摄像机位置】
-            camera._right = new Vector3(1.0f, 0.0f, 0.0f);  //【摄像机右侧】
-            camera._up = Vector3.UnitY;  //【摄像机顶部】
+            camera._position = new Vector3(0.0f, 1.0f, 18.0f); ; 
+            camera._right = new Vector3(1.0f, 0.0f, 0.0f);  
+            camera._up = Vector3.UnitY;  
 
             chk_MJ01.Checked = true;
             chk_MJ02.Checked = true;
             chk_MJ03.Checked = false;
             chk_MJ04.Checked = false;
         }
-        /// <summary>
-        /// 重置构型
-        /// </summary>
         private void btn_home_Click(object sender, EventArgs e)
         {
             Txt1.Text = "0.0";
@@ -2284,27 +1835,22 @@ namespace OpenTK_Winform_Robot
             Txt8.Text = "0.0";
             Txt9.Text = "0.0";
         }
-        /// <summary>
-        /// 随机构型
-        /// </summary>
         private void btn_random_Click(object sender, EventArgs e)
         {
             Random rand = new Random();
-            // 关节1
             double randJoint1 = 11500.0 * rand.NextDouble();
             Txt1.Text = (randJoint1/2.0).ToString("F1");
             Txt2.Text = (randJoint1 / 2.0).ToString("F1");
 
-            Txt3.Text = (-180.0+360.0 * rand.NextDouble()).ToString("F1"); // 关节2
-            Txt4.Text = (-35.0+75.0 * rand.NextDouble()).ToString("F1"); // 关节3
-            // 关节4
+            Txt3.Text = (-180.0+360.0 * rand.NextDouble()).ToString("F1");  
+            Txt4.Text = (-35.0+75.0 * rand.NextDouble()).ToString("F1");  
             double randJoint4 = 3000.0 * rand.NextDouble();
             Txt5.Text = (randJoint4 / 2.0).ToString("F1");
             Txt6.Text = (randJoint4 / 2.0).ToString("F1");
 
-            Txt7.Text = (-75.0 + 150.0 * rand.NextDouble()).ToString("F1"); // 关节5
-            Txt8.Text = (-105.0 + 135.0 * rand.NextDouble()).ToString("F1"); // 关节5
-            Txt9.Text = (-180.0 + 360.0 * rand.NextDouble()).ToString("F1"); // 关节5
+            Txt7.Text = (-75.0 + 150.0 * rand.NextDouble()).ToString("F1");  
+            Txt8.Text = (-105.0 + 135.0 * rand.NextDouble()).ToString("F1");  
+            Txt9.Text = (-180.0 + 360.0 * rand.NextDouble()).ToString("F1");  
         }
 
 
@@ -2338,38 +1884,33 @@ namespace OpenTK_Winform_Robot
             glControl1_Paint(null, null);
         }
 
-        /// <summary>
-        /// 路径规划关节变化演示
-        /// </summary>
         public IXLWorksheet worksheet_PP;
-        private bool isPaused;      // 控制暂停/继续
+        private bool isPaused;       
         private void btn_pp_show_Click(object sender, EventArgs e)
         {
             string defaultPath;
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = @"J:\同步空间\BaiduSyncdisk\Matlab\路径规划\Data";  //默认打开目录
+            openFileDialog.InitialDirectory = @"J:\同步空间\BaiduSyncdisk\Matlab\路径规划\Data";  
             openFileDialog.Filter = "文本文件 (*.xlsx)|*.xlsx|所有文件 (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                defaultPath = openFileDialog.FileName; //记录选中的目录  
+                defaultPath = openFileDialog.FileName;   
                 XLWorkbook inventory_rb = new XLWorkbook(defaultPath);
-                worksheet_PP = inventory_rb.Worksheet(1);  // 获取第一个工作表
+                worksheet_PP = inventory_rb.Worksheet(1);   
 
-                int rowCount = worksheet_PP.RowsUsed().Count();  // 获取工作表的总行数
+                int rowCount = worksheet_PP.RowsUsed().Count();   
 
-                //drawLine.ClearPoints(); //运动曲线绘制数组
-                PP_Stop = 0;            // 路径规划运动结束  1-结束
+                PP_Stop = 0;               
 
                 Task.Run(async () =>
                 {
                     for (int i = 1; i < rowCount + 1; i++)
                     {
-                        while (isPaused) await Task.Delay(100); // 等待恢复
+                        while (isPaused) await Task.Delay(100);  
 
-                        // 读取单元格内容
                         float q_current_1 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 1).Value.ToString());
                         float q_current_2 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 2).Value.ToString());
                         float q_current_3 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 3).Value.ToString());
@@ -2379,7 +1920,6 @@ namespace OpenTK_Winform_Robot
                         float q_current_7 = (float)Convert.ToDouble(worksheet_PP.Cell(i, 7).Value.ToString());
 
 
-                        // 确保 UI 更新在主线程进行
                         Txt1.Invoke(new Action(() =>
                         {
                             Txt1.Text = (q_current_1 / 2.0).ToString();
@@ -2393,18 +1933,12 @@ namespace OpenTK_Winform_Robot
                             Txt9.Text = q_current_7.ToString();
 
                             int index = this.dataGridView1.Rows.Add();
-                            // 绘制关节变化曲线
                             for (int j = 0; j < chart1.Series.Count; j++)
                             {
-                                //AddPointToSeries(j, i, Convert.ToDouble(worksheet_PP.Cell(i, j + 1).Value.ToString()));
-
                                 double value = Convert.ToDouble(worksheet_PP.Cell(i, j + 1).Value.ToString());
 
-                                // 1️⃣ 绘制曲线
                                 AddPointToSeries(j, i, value);
 
-                                // 2️⃣ 写入 DataGridView（第 j 列对应 q(j+1)）
-                                
                                 dataGridView1.Rows[index].Cells[0].Value = i;
                                 dataGridView1.Rows[index].Cells[j+1].Value = value.ToString("F1");
 
@@ -2412,20 +1946,11 @@ namespace OpenTK_Winform_Robot
 
                         }));
 
-                        // 确保 OpenGL 绘制在主线程进行
                         glControl1.Invoke(new Action(() => glControl1_Paint(null, null)));
 
                         await Task.Delay(2);
-
-
-                        // 第一帧暂停
-                        //if (i == 1) isPaused = true; btn_pause.Text = "Continue sim";
-                        //// 第30帧暂停
-                        //if (i == 35) isPaused = true; btn_pause.Text = "继续演示";
-                        //if (i == 50) isPaused = true; btn_pause.Text = "继续演示";
-                        //if (i == 75) isPaused = true; btn_pause.Text = "继续演示";
                     }
-                    PP_Stop = 1;           // 路径规划运动结束
+                    PP_Stop = 1;          
                 });
             }
         }

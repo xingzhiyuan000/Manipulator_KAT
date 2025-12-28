@@ -9,27 +9,18 @@ namespace OpenTK_Winform_Robot
     class Common
     {
 
-        /// <summary>
-        /// 随机骨骼位置和角度
-        /// </summary>
-        /// <param name="bone"></param>
-        /// <param name="rand"></param>
         public static void RandomSetJoint(Joint joint, Random rand)
         {
-            //随机位置
             float randTrans = joint.constraintTrans[0] + (float)rand.NextDouble() * (joint.constraintTrans[1] - joint.constraintTrans[0]);
-            joint.translate(randTrans); //检查是否在区间内
+            joint.translate(randTrans); 
                                      
             float randRotX = joint.constraint[0].X + (float)rand.NextDouble() * (joint.constraint[1].X - joint.constraint[0].X);
             float randRotY = joint.constraint[0].Y + (float)rand.NextDouble() * (joint.constraint[1].Y - joint.constraint[0].Y);
             float randRotZ = joint.constraint[0].Z + (float)rand.NextDouble() * (joint.constraint[1].Z - joint.constraint[0].Z);
             
-            joint.setAngle(randRotX, randRotY, randRotZ); //区间检查
+            joint.setAngle(randRotX, randRotY, randRotZ); 
 
         }
-        /// <summary>
-        /// 文本框输入检查
-        /// </summary>
         public static bool check_Tex(string val)
         {
             if (val == "" || val == "-" || val.EndsWith(".") || val == "*" || val == "/") return false;
@@ -38,18 +29,10 @@ namespace OpenTK_Winform_Robot
 
         }
 
-        /// <summary>
-        ///【齐次变换矩阵】 
-        /// </summary>
         public static Matrix<double> HomoTransMat(double d1, double theta2, double theta3, double d4, double theta5, double theta6, double theta7, string cmd)
         {
             
             int i=0;
-            //double[] theta = new double[] {0, theta2, theta3, -90 * (Math.PI / 180), theta5,theta6,theta7, -90 * (Math.PI / 180)};
-            //double[] alpha = new double[] {0, -90 * (Math.PI / 180), -90 * (Math.PI / 180), 90 * (Math.PI / 180), -90 * (Math.PI / 180), 90 * (Math.PI / 180), 90 * (Math.PI / 180), 0};
-            //double[] a = new double[] {0, 0,40, 559, 0,280,70.114,0};
-            //double[] d = new double[] {d1, 230.5,0, d4, -741,0,0,587.431};
-
             double[] theta = new double[] { global.theta[0], theta2, theta3, global.theta[3], theta5, theta6, theta7, global.theta[7]};
             double[] alpha = new double[7];
             double[] a = new double[7];
@@ -111,9 +94,6 @@ namespace OpenTK_Winform_Robot
             return T;
         }
 
-        /// <summary>
-        /// 正运动学
-        /// </summary>
         public static Matrix<double> Fkine_LH4500(double d1, double theta2, double theta3, double d4, double theta5, double theta6, double theta7, string type)
         {
             var T01 = HomoTransMat(d1,  theta2,  theta3,  d4,  theta5,  theta6, theta7, "01");
@@ -126,7 +106,6 @@ namespace OpenTK_Winform_Robot
             var T78 = HomoTransMat(d1, theta2, theta3, d4, theta5, theta6, theta7, "78");
 
             Matrix<double> T = null;
-            // 逐步计算齐次变换矩阵 T08 = T01 * T12 * T23 * T34 * T45 * T56 * T67* T78
             var T02 = T01 * T12;
             var T03 = T01 * T12 * T23 ;
             var T04 = T01 * T12 * T23 * T34;
@@ -135,7 +114,6 @@ namespace OpenTK_Winform_Robot
             var T07 = T01 * T12 * T23 * T34 * T45 * T56 * T67;
             var T08 = T01 * T12 * T23 * T34 * T45 * T56 * T67 * T78;
 
-            //T18=T12 * T23 * T34 * T45 * T56 * T67* T78
             var T18 = T12 * T23 * T34 * T45 * T56 * T67 * T78;
             var T28 = T23 * T34 * T45 * T56 * T67 * T78;
             var T38 = T34 * T45 * T56 * T67 * T78;
@@ -144,7 +122,6 @@ namespace OpenTK_Winform_Robot
             var T68 = T67 * T78;
 
 
-            // 根据type选择不同的矩阵
             switch (type){
                 case "01":
                     T = T01;
@@ -196,19 +173,8 @@ namespace OpenTK_Winform_Robot
             return T;
         }
 
-        /// <summary>
-        /// 角度偏置转换
-        /// </summary>
         public static double[] convertJoint(double V1, double V2, double V3, double V4, double V5, double V6, double V7)
         {
-            // 偏置补偿
-            //double O1 = 3288;
-            //double O2 = Math.PI / 2;
-            //double O3 = -Math.PI / 2;
-            //double O4 = 2281;
-            //double O5 = -Math.PI / 2;
-            //double O6 = Math.PI / 2;
-            //double O7 = 0;
 
             double O1 = global.offset[0];
             double O2 = global.offset[1];
@@ -218,10 +184,9 @@ namespace OpenTK_Winform_Robot
             double O6 = global.offset[5];
             double O7 = global.offset[6];
 
-            // 计算偏置补偿后的theta
             double[] theta = new double[7];
             theta[0] = V1 + O1;
-            theta[1] = V2  + O2; // 度转弧度
+            theta[1] = V2  + O2;  
             theta[2] = V3  + O3;
             theta[3] = V4 +  O4;
             theta[4] = V5  + O5;
@@ -235,22 +200,20 @@ namespace OpenTK_Winform_Robot
     
     public static class global
     {
-        public static Vector3 t_position = new Vector3(-0.6229f, -3.314f, 7.625f); //【目标初始位置】
-        //public static Vector3 t_position = new Vector3(-4.385f, -0.903f, 10.256f); //【目标初始位置】
-
+        public static Vector3 t_position = new Vector3(-0.6229f, -3.314f, 7.625f); 
         public static Vector3 r_position_0 = new Vector3(0.0f,0.0f,0.0f);
-        public static Vector3 r_position_1 = new Vector3(0.0f, 0.0f, 7.483f);  //【大臂移动-前段】
-        public static Vector3 r_position_2 = new Vector3(0.0f, 0.0f, 7.305f); //【小臂回旋】
+        public static Vector3 r_position_1 = new Vector3(0.0f, 0.0f, 7.483f);  
+        public static Vector3 r_position_2 = new Vector3(0.0f, 0.0f, 7.305f); 
 
         public static Vector3 r_position_3 = new Vector3(0.0f, 0.2305f, 0.0f); 
-        public static Vector3 r_position_4 = new Vector3(0.0f, 0.0f, -0.04f);//【小臂俯仰】
-        public static Vector3 r_position_5 = new Vector3(0.0f, 0.559f, 0.0f);//【小臂俯仰-上-辅助】
-        public static Vector3 r_position_6 = new Vector3(0.0f, 0.0f, 3.47f);//【】
-        public static Vector3 r_position_7 = new Vector3(0.0f, 0.0f, 1.811f);//【腕部平摆】
+        public static Vector3 r_position_4 = new Vector3(0.0f, 0.0f, -0.04f);
+        public static Vector3 r_position_5 = new Vector3(0.0f, 0.559f, 0.0f);
+        public static Vector3 r_position_6 = new Vector3(0.0f, 0.0f, 3.47f);
+        public static Vector3 r_position_7 = new Vector3(0.0f, 0.0f, 1.811f);
         public static Vector3 r_position_8 = new Vector3(0.0f, -0.741f, 0.0f);
-        public static Vector3 r_position_9 = new Vector3(0.0f, 0.0f, 0.28f);//【腕部俯仰】
-        public static Vector3 r_position_10 = new Vector3(0.0f,0.070114f, 0.0f);//【腕部翻滚】
-        public static Vector3 r_position_11 = new Vector3(0.0f, 0.0f, 0.587431f);//【末端执行器】
+        public static Vector3 r_position_9 = new Vector3(0.0f, 0.0f, 0.28f);
+        public static Vector3 r_position_10 = new Vector3(0.0f,0.070114f, 0.0f);
+        public static Vector3 r_position_11 = new Vector3(0.0f, 0.0f, 0.587431f);
 
         public static Vector3 w_position_0 = r_position_0;
         public static Vector3 w_position_1 = r_position_0 + r_position_1;
@@ -265,22 +228,19 @@ namespace OpenTK_Winform_Robot
         public static Vector3 w_position_10 = r_position_0 + r_position_1 + r_position_2 + r_position_3 + r_position_4 + r_position_5 + r_position_6 + r_position_7 + r_position_8 + r_position_9 + r_position_10;
         public static Vector3 w_position_11 = r_position_0 + r_position_1 + r_position_2 + r_position_3 + r_position_4 + r_position_5 + r_position_6 + r_position_7 + r_position_8 + r_position_9 + r_position_10 + r_position_11;
 
-        public static float[] state;  //机器人状态
+        public static float[] state;  
         public static Object targetPoint;
         public static Scene scene = null;
         public static int num_step = 0;
 
-        // MD-H
         public static double[] alpha;
         public static double[] theta;
         public static double[] a;
         public static double[] d;
 
-        // 关节偏置补偿
         public static double[] offset;
 
 
-        //角度限制
         public static Matrix<double> q_lim = Matrix<double>.Build.DenseOfArray(new double[,] {
             { 0, 11500},
             { -180 * (Math.PI / 180), 180 * (Math.PI / 180) },

@@ -19,12 +19,10 @@ namespace OpenTK_Winform_Robot
             Object rootNode = new Object();
             var importer = new AssimpContext();
             
-            //读取模型文件
             importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.GenerateNormals);
 
             Assimp.Scene scene = importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.GenerateNormals);
 
-            // Validate if the scene was read correctly
             if (scene == null || (scene.SceneFlags & SceneFlags.Incomplete) != 0 || scene.RootNode == null)
             {
                 MessageBox.Show("模型读取失败");
@@ -35,24 +33,15 @@ namespace OpenTK_Winform_Robot
 
             return rootNode;
         }
-        /// <summary>
-        /// 【处理节点】
-        /// </summary>
-        /// <param name="ainode"></param>
-        /// <param name="parent"></param>
         private static void processNode(Assimp.Node ainode, Object parent, Assimp.Scene scene, string texturesPath)
         {
-            Object node = new Object();  //【生成对应Object】
+            Object node = new Object();  
             parent.addChild(node);
 
 
             System.Numerics.Matrix4x4 localMatrix = toMatrix4x4(ainode.Transform);
             System.Numerics.Vector3 position, eulerAngle, scale;
             Tools.Decompose(localMatrix, out position, out eulerAngle, out scale);
-
-            //Matrix4 localMatrix = toMatrix4(ainode.Transform);
-            //Vector3 position, eulerAngle;
-            //Tools.Decompose(localMatrix, out position, out eulerAngle);
 
             node.SetName(ainode.Name.ToString());
             node.SetPosition(new OpenTK.Vector3(position.X, position.Y, position.Z));
@@ -61,14 +50,13 @@ namespace OpenTK_Winform_Robot
             node.setAngleZ(eulerAngle.Z);
             node.SetScale(new OpenTK.Vector3(scale.X, scale.Y, scale.Z));
 
-            //【检查有没有Mesh，并解析】
             for (int i = 0; i < ainode.MeshCount; i++)
             {
-                int meshID = ainode.MeshIndices[i];       //mesh的ID们
+                int meshID = ainode.MeshIndices[i];       
                 Assimp.Mesh aimesh = scene.Meshes[meshID];
 
                 var mesh = processMesh(aimesh,scene, texturesPath);
-                node.addChild(mesh); //【mesh加入对应node节点】
+                node.addChild(mesh); 
             }
 
             for (int i = 0; i < ainode.ChildCount; i++)
@@ -85,15 +73,12 @@ namespace OpenTK_Winform_Robot
             List<float> uvs = new List<float>();
             List<uint> indices = new List<uint>();
 
-            //1.【解析顶点、Normal、UVs】
             for (int i = 0; i < aimesh.VertexCount; i++)
             {
-                // Vertex 顶点
                 positions.Add(aimesh.Vertices[i].X);
                 positions.Add(aimesh.Vertices[i].Y);
                 positions.Add(aimesh.Vertices[i].Z);
 
-                // Normals数据
                 if (aimesh.HasNormals)
                 {
                     normals.Add(aimesh.Normals[i].X);
@@ -101,7 +86,6 @@ namespace OpenTK_Winform_Robot
                     normals.Add(aimesh.Normals[i].Z);
                 }
 
-                // UVs数据
                 if (aimesh.HasTextureCoords(0))
                 {
                     uvs.Add(aimesh.TextureCoordinateChannels[0][i].X);
@@ -114,7 +98,6 @@ namespace OpenTK_Winform_Robot
                 }
             }
 
-            //2.【解析indices】
             for (int i = 0; i < aimesh.FaceCount; i++)
             {
                 Face face = aimesh.Faces[i];
@@ -128,50 +111,38 @@ namespace OpenTK_Winform_Robot
             var material = new Material();
 
 
-            //3.【解析material】
-            
             Texture texture = null;
             Assimp.Material aiMat = scene.Materials[aimesh.MaterialIndex];
                 
-            // 获取纹理路径
             string texturePath = aiMat.TextureDiffuse.FilePath;
 
             string exeDir = Application.StartupPath;
             string projectRoot = Directory.GetParent(exeDir).Parent.FullName;
-            //判断是否有嵌入FBX图片
             if (texturePath!=null)
             {
-                //判断是否是嵌入FBX图片
                 if (texturePath.StartsWith("*"))
                 {
-                    // 获取内嵌纹理的索引
-                    int textureIndex = int.Parse(texturePath.Substring(1)); //去掉字符串的第一个字符，并返回剩下的部分
+                    int textureIndex = int.Parse(texturePath.Substring(1)); 
 
-                    // 获取内嵌纹理
                     var embeddedTexture = scene.Textures[textureIndex];
 
-                    // 纹理数据通常以二进制数据形式存储
                     byte[] textureData = embeddedTexture.CompressedData;
-                    // 获取纹理的格式
                     string textureFormat = embeddedTexture.CompressedFormatHint;
 
-                    // 将内嵌纹理保存为文件（例如PNG）
                     string outputFilePath = texturesPath + $"Textures\\embedded_texture_{textureIndex}.{textureFormat}";
-                    File.WriteAllBytes(outputFilePath, textureData); //写入文件目录
+                    File.WriteAllBytes(outputFilePath, textureData); 
 
-                    texture = Texture.CreateTextureFromMemory(outputFilePath, 0, textureData); //从内存读取贴图数据
+                    texture = Texture.CreateTextureFromMemory(outputFilePath, 0, textureData); 
 
                 }
                 else
                 {
-                    //没有内嵌-【默认贴图】
                     texture = new Texture(projectRoot + "/Resources/Textures/defaultTexture.png", 0);
                 }
                 material.mDiffuse = texture;
             }
             else
             {
-                //【默认贴图】
                 material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/defaultTexture.png", 0);
             }
 
@@ -182,7 +153,6 @@ namespace OpenTK_Winform_Robot
 
         private static System.Numerics.Matrix4x4 toMatrix4x4(Assimp.Matrix4x4 aiMatrix)
         {
-            // Convert Assimp Matrix4x4 to System.Numerics.Matrix4x4
             return new System.Numerics.Matrix4x4(
                 aiMatrix.A1, aiMatrix.A2, aiMatrix.A3, aiMatrix.A4,
                 aiMatrix.B1, aiMatrix.B2, aiMatrix.B3, aiMatrix.B4,
@@ -192,7 +162,6 @@ namespace OpenTK_Winform_Robot
 
         private static Matrix4 toMatrix4(Assimp.Matrix4x4 aiMatrix)
         {
-            // Convert Assimp Matrix4x4 to System.Numerics.Matrix4x4
             return new Matrix4(
                 aiMatrix.A1, aiMatrix.A2, aiMatrix.A3, aiMatrix.A4,
                 aiMatrix.B1, aiMatrix.B2, aiMatrix.B3, aiMatrix.B4,
