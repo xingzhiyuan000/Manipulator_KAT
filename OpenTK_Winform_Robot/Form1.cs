@@ -790,17 +790,20 @@ namespace OpenTK_Winform_Robot
             glControl1.SwapBuffers(); //双缓存
 
         }
+        string exeDir;
+        string projectRoot;
         void prepare()
         {
+             exeDir = Application.StartupPath;
+             projectRoot = Directory.GetParent(exeDir).Parent.FullName;
+
             renderer = new Renderer();  //渲染器
             global.scene = new Scene();        //场景
 
             //模型读取-【机械手臂】
-            //robotModel = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/OnlyRobot20241216.fbx"); // 不带衬板
-            robotModel = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/Manipulator_20250326.fbx"); // 带衬板带小车
-            //robotModel = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/house.fbx"); 
-            
-            //Object robotModel = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/Cube.fbx");
+           
+            robotModel = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/Manipulator_20250326.fbx"); // 带衬板带小车
+           
 
             //setModelBlend(robotModel, true, 0.8f); //设置模型的【透明度】
 
@@ -913,25 +916,25 @@ namespace OpenTK_Winform_Robot
 
             //模型读取-【球磨机-MJ01】
 
-            MJ01 = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/MJ01.fbx");
+            MJ01 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ01.fbx");
             MJ01.SetName("磨机_01");
             MJ01.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
             //setModelBlend(MJ01, true, 0.5f);                // 设置透明度
             global.scene.addChild(MJ01);
 
-            MJ02 = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/MJ02.fbx");
+            MJ02 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ02.fbx");
             MJ02.SetName("磨机_02");
             MJ02.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
             global.scene.addChild(MJ02);
             
 
-            MJ03 = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/MJ03.fbx");
+            MJ03 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ03.fbx");
             MJ03.SetName("磨机_03");
             MJ03.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
             global.scene.addChild(MJ03);
             
 
-            MJ04 = AssimpLoader.loadModel(Directory.GetCurrentDirectory() + "/Resources/FBX/MJ04.fbx");
+            MJ04 = AssimpLoader.loadModel(projectRoot + "/Resources/FBX/MJ04.fbx");
             MJ04.SetName("磨机_04");
             MJ04.SetScale(new Vector3(0.01f, 0.01f, 0.01f));
             global.scene.addChild(MJ04);
@@ -1036,7 +1039,7 @@ namespace OpenTK_Winform_Robot
             //【Material】
             Material material = new Material();
 
-            material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/earth.png", 0);
+            material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/earth.png", 0);
             material.mType = MaterialType.PhongInstanceMaterial;
 
             InstancedMesh sphereMesh = new InstancedMesh(geometry, material, 2);
@@ -1074,7 +1077,7 @@ namespace OpenTK_Winform_Robot
             //【Material】
             Material material = new Material();
 
-            material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/target.jpg", 0);
+            material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/target.jpg", 0);
             material.mType = MaterialType.PhongMaterial;
 
             //【Meshe】
@@ -1100,7 +1103,7 @@ namespace OpenTK_Winform_Robot
             //【Material】
             Material material = new Material();
 
-            material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/bone.png", 0);
+            material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/bone.png", 0);
             material.mType = MaterialType.PhongMaterial;
             
             //material.mSpecularMask = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/sp_mask.png", 1);
@@ -1223,7 +1226,7 @@ namespace OpenTK_Winform_Robot
             /////------------【天空盒相关-Cube】-------------
 
             ///------------【天空盒相关-球形】-------------
-            Texture envTex = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/skybox/sphericalMap.png", 0);
+            Texture envTex = new Texture(projectRoot + "/Resources/Textures/skybox/sphericalMap.png", 0);
             Geometry cubeGeometry = new Geometry();
             cubeGeometry = cubeGeometry.createBox(1.0f);
             Material sphereMaterial = new Material();
@@ -1618,7 +1621,7 @@ namespace OpenTK_Winform_Robot
                 Material material = new Material();
                 //material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/yellow.png", 0);
                 //material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/bone.png", 0);
-                material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/green.png", 0);
+                material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/green.png", 0);
                 material.mType = MaterialType.PhongInstanceMaterial;
                 material.mShiness = 64.0f; //高光强度
 

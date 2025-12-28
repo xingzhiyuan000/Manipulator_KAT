@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
@@ -15,12 +16,14 @@ namespace OpenTK_Winform_Robot
         private float lineWidth = 2.0f;
         public Vector3 lineColor = new Vector3(1.0f, 0.0f, 0.0f);  // 默认绿色
         private Shader mLineShader = null;                          // 画线用的Shader
-        //private int colorLocation;
         private int bufferSize=2048;                                // 如果点过多则线条绘制不完
 
         public Drawline()
         {
-            mLineShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/line.vert", Directory.GetCurrentDirectory() + "/GLSL/line.frag");
+            string exeDir = Application.StartupPath;
+            string projectRoot = Directory.GetParent(exeDir).Parent.FullName;
+
+            mLineShader = new Shader(projectRoot + "/GLSL/line.vert", projectRoot + "/GLSL/line.frag");
             vao = GL.GenVertexArray();
             vbo = GL.GenBuffer();
             cbo = GL.GenBuffer();

@@ -23,17 +23,29 @@ namespace OpenTK_Winform_Robot
         public List<Mesh> mOpacityObjects=new List<Mesh>();         //【不透明物体】
         public List<Mesh> mTransparentObjects = new List<Mesh>();   //【透明物体】
 
+        
         public Renderer()
         {
-            mPhongShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phong.vert", Directory.GetCurrentDirectory() + "/GLSL/phong.frag");
-            mWhiteShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/white.vert", Directory.GetCurrentDirectory() + "/GLSL/white.frag");
-            mDepthShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/depth.vert", Directory.GetCurrentDirectory() + "/GLSL/depth.frag");
-            mCubeShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/cube.vert", Directory.GetCurrentDirectory() + "/GLSL/cube.frag");
-            mPhongEnvShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phongEnv.vert", Directory.GetCurrentDirectory() + "/GLSL/phongEnv.frag");
-            mPhongInstanceShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phongInstance.vert", Directory.GetCurrentDirectory() + "/GLSL/phongInstance.frag");
-            mSphereShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/sphere.vert", Directory.GetCurrentDirectory() + "/GLSL/sphere.frag");
-            //mAxisShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/axis.vert", Directory.GetCurrentDirectory() + "/GLSL/axis.frag");
-            mLineShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/line.vert", Directory.GetCurrentDirectory() + "/GLSL/line.frag");
+            string exeDir = Application.StartupPath;
+            string projectRoot = Directory.GetParent(exeDir).Parent.FullName;
+
+            mPhongShader = new Shader(projectRoot + "/GLSL/phong.vert", projectRoot + "/GLSL/phong.frag");
+            mWhiteShader = new Shader(projectRoot + "/GLSL/white.vert", projectRoot + "/GLSL/white.frag");
+            mDepthShader = new Shader(projectRoot + "/GLSL/depth.vert", projectRoot + "/GLSL/depth.frag");
+            mCubeShader = new Shader(projectRoot + "/GLSL/cube.vert", projectRoot + "/GLSL/cube.frag");
+            mPhongEnvShader = new Shader(projectRoot + "/GLSL/phongEnv.vert", projectRoot + "/GLSL/phongEnv.frag");
+            mPhongInstanceShader = new Shader(projectRoot + "/GLSL/phongInstance.vert", projectRoot + "/GLSL/phongInstance.frag");
+            mSphereShader = new Shader(projectRoot + "/GLSL/sphere.vert", projectRoot + "/GLSL/sphere.frag");
+            mLineShader = new Shader(projectRoot + "/GLSL/line.vert", projectRoot + "/GLSL/line.frag");
+
+            //mPhongShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phong.vert", Directory.GetCurrentDirectory() + "/GLSL/phong.frag");
+            //mWhiteShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/white.vert", Directory.GetCurrentDirectory() + "/GLSL/white.frag");
+            //mDepthShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/depth.vert", Directory.GetCurrentDirectory() + "/GLSL/depth.frag");
+            //mCubeShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/cube.vert", Directory.GetCurrentDirectory() + "/GLSL/cube.frag");
+            //mPhongEnvShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phongEnv.vert", Directory.GetCurrentDirectory() + "/GLSL/phongEnv.frag");
+            //mPhongInstanceShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/phongInstance.vert", Directory.GetCurrentDirectory() + "/GLSL/phongInstance.frag");
+            //mSphereShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/sphere.vert", Directory.GetCurrentDirectory() + "/GLSL/sphere.frag");
+            //mLineShader = new Shader(Directory.GetCurrentDirectory() + "/GLSL/line.vert", Directory.GetCurrentDirectory() + "/GLSL/line.frag");
         }
 
         void renderObject(

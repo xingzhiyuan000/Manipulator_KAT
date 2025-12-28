@@ -175,13 +175,5 @@ namespace OpenTK_Winform_Robot
         {
             mUnit = unit;
         }
-
-        //~Texture()
-        //{
-        //    if (mHandle != 0)
-        //    {
-        //        GL.DeleteTexture(mHandle); //释放纹理
-        //    }
-        //}
     }
 }

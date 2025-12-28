@@ -135,6 +135,9 @@ namespace OpenTK_Winform_Robot
                 
             // 获取纹理路径
             string texturePath = aiMat.TextureDiffuse.FilePath;
+
+            string exeDir = Application.StartupPath;
+            string projectRoot = Directory.GetParent(exeDir).Parent.FullName;
             //判断是否有嵌入FBX图片
             if (texturePath!=null)
             {
@@ -162,14 +165,14 @@ namespace OpenTK_Winform_Robot
                 else
                 {
                     //没有内嵌-【默认贴图】
-                    texture = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/defaultTexture.png", 0);
+                    texture = new Texture(projectRoot + "/Resources/Textures/defaultTexture.png", 0);
                 }
                 material.mDiffuse = texture;
             }
             else
             {
                 //【默认贴图】
-                material.mDiffuse = new Texture(Directory.GetCurrentDirectory() + "/Resources/Textures/defaultTexture.png", 0);
+                material.mDiffuse = new Texture(projectRoot + "/Resources/Textures/defaultTexture.png", 0);
             }
 
             return new Meshes.Mesh(geometry, material);
