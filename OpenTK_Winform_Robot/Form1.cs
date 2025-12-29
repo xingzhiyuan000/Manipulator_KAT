@@ -312,26 +312,26 @@ namespace OpenTK_Winform_Robot
             prepare();
 
 
-            find_joint1 = findJoint(global.scene, "坐标1_大臂移动");
-            find_joint2 = findJoint(global.scene, "坐标1_大臂移动V2");
+            find_joint1 = findJoint(global.scene, "Coordinate1_Upperarm_Inner");
+            find_joint2 = findJoint(global.scene, "Coordinate1_Upperarm_Outer");
 
-            find_joint3 = findJoint(global.scene, "坐标2_小臂回旋");
-            find_joint4 = findJoint(global.scene, "坐标3_小臂俯仰");
+            find_joint3 = findJoint(global.scene, "Coordinate2_Forearm_Rotation");
+            find_joint4 = findJoint(global.scene, "Coordinate3_Forearm_Pitch");
 
-            find_joint5 = findJoint(global.scene, "坐标4_小臂移动");
-            find_joint6 = findJoint(global.scene, "坐标4_小臂移动V2");
+            find_joint5 = findJoint(global.scene, "Coordinate4_Forearm_Inner");
+            find_joint6 = findJoint(global.scene, "Coordinate4_Forearm_Outer");
 
-            find_joint7 = findJoint(global.scene, "坐标5_腕部平摆");
-            find_joint8 = findJoint(global.scene, "坐标6_腕部俯仰");
-            find_joint9 = findJoint(global.scene, "坐标7_腕部滚摆");
+            find_joint7 = findJoint(global.scene, "Coordinate5_Wrist_Parallelism");
+            find_joint8 = findJoint(global.scene, "Coordinate6_Wrist_Pitch");
+            find_joint9 = findJoint(global.scene, "Coordinate7_Wrist_Roll");
 
-            global.targetPoint = findJoint(global.scene, "目标点");
+            global.targetPoint = findJoint(global.scene, "TargetPoint");
 
             
-            CB01 = findJoint(robotModel, "衬板");
-            Car01=findJoint(robotModel, "运输小车");
-            Car02= findJoint(robotModel, "回转台");
-            eeAxis= findJoint(robotModel, "末端执行器坐标系");
+            CB01 = findJoint(robotModel, "Liner");
+            Car01=findJoint(robotModel, "TransportTrolley");
+            Car02= findJoint(robotModel, "RotaryTable");
+            eeAxis= findJoint(robotModel, "EndCoordinate");
 
         }
 
@@ -1848,15 +1848,15 @@ namespace OpenTK_Winform_Robot
         private void chk_CB01_CheckedChanged(object sender, EventArgs e)
         {
             if (!global.existModels) return;
-            if (!chk_CB01.Checked) findJoint(robotModel, "坐标7_腕部滚摆").removeChild(CB01);
-            else findJoint(robotModel, "坐标7_腕部滚摆").addChild(CB01);
+            if (!chk_CB01.Checked) findJoint(robotModel, "Coordinate7_Wrist_Roll").removeChild(CB01);
+            else findJoint(robotModel, "Coordinate7_Wrist_Roll").addChild(CB01);
         }
 
         private void chk_EE_CheckedChanged(object sender, EventArgs e)
         {
             if (!global.existModels) return;
-            if (!chk_EE.Checked) findJoint(robotModel, "坐标7_腕部滚摆").removeChild(eeAxis);
-            else findJoint(robotModel, "坐标7_腕部滚摆").addChild(eeAxis);
+            if (!chk_EE.Checked) findJoint(robotModel, "Coordinate7_Wrist_Roll").removeChild(eeAxis);
+            else findJoint(robotModel, "Coordinate7_Wrist_Roll").addChild(eeAxis);
         }
         private void chk_manipulator_CheckedChanged(object sender, EventArgs e)
         {
