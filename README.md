@@ -31,7 +31,7 @@ Many functions have been designed and integrated into KAT. The center module is 
 ![Layout](https://github.com/xingzhiyuan000/Manipulator_KAT/blob/master/OpenTK_Winform_Robot/Resources/Textures/Software%20layout.jpg?raw=true)
 
 
-# How to use KAT
+# Usage Guideline
 
 Some preliminary configurations are required before using KAT. The detailed steps are as follows:
 
