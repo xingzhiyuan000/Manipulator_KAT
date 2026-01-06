@@ -2,7 +2,7 @@
 
 Kinematic analysis is a foundation for manipulator optimization. The involved directions include inverse kinematic solving, motion control, and path planning. Accordingly, this paper presents a general kinematic analysis tool (KAT) based on OpenGL. With an intuitive user interface, KAT allows users to control their manipulator by mouse operation. Through the simple system setting, different simulations can be carried out in KAT, such as forward and inverse kinematic solving, workspace visualization, and joint variation analysis. KAT is a versatile and accessible platform for scientific research on industrial robotic manipulators.
 
-# Software Requirements:
+# Software Requirements
 
 To run and revise KAT, you will need the following:
 
